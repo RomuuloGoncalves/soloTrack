@@ -2,7 +2,7 @@
 
 ## 1. Tabelas Normais (Entidades Principais)
 
-### `users`
+### `usuario`
 *Armazena as credenciais de acesso ao sistema.*
 * **id** (BIGINT, Primary Key, Auto-Increment)
 * **nome** (VARCHAR) - Nome completo do usuário
@@ -92,7 +92,7 @@
 * **porta_conexao** (VARCHAR) - Onde fisicamente o fio foi ligado (Ex: Pino_34, I2C, Porta Analógica 1)
 * *(Primary Key Composta: equipamento_id + tipo_sensor_id)*
 
-### `propriedade_user`
+### `propriedade_usuario`
 *Liga os usuários às fazendas, permitindo múltiplos acessos (donos e técnicos).*
 * **propriedade_id** (BIGINT, Foreign Key)
 * **user_id** (BIGINT, Foreign Key)
