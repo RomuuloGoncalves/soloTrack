@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('area_cultura', function (Blueprint $table) {
             $table->id();
+            $table->id('area_id');
+            $table->id('cultura_id');
+            $table->date('data_plantio');
+            $table->date('data_colheita');
             $table->timestamps();
         });
     }

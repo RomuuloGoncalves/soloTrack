@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('area_insumo', function (Blueprint $table) {
             $table->id();
+            $table->id('area_id');
+            $table->id('insumo_id');
+            $table->integer('quantidade_padrao');
             $table->timestamps();
         });
     }

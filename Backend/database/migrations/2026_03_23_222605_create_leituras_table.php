@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('leituras', function (Blueprint $table) {
             $table->id();
+            $table->id('area_id');
+            $table->id('equipamento_id');
+            $table->id('tipo_sensor_id');
+            $table->decimal('valor_lido');
             $table->timestamps();
         });
     }

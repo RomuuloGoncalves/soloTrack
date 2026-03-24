@@ -6,5 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class TipoSensor extends Model
 {
-    //
+    protected $fillable = [
+        'grandeza',
+        'unidade_de_medida',
+    ];
 }

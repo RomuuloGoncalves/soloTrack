@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('propriedade_user', function (Blueprint $table) {
             $table->id();
+            $table->id('usuario_id');
+            $table->id('propriedade_id');
+            $table->string('nivel_acesso');
             $table->timestamps();
         });
     }

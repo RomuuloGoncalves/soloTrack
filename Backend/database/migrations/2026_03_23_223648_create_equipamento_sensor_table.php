@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('equipamento_sensor', function (Blueprint $table) {
             $table->id();
+            $table->id('equipamento_id');
+            $table->id('tipo_sensor_id');
+            $table->integer('porta_conexao');
             $table->timestamps();
         });
     }
