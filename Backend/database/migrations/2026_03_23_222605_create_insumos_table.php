@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('insumos', function (Blueprint $table) {
             $table->id();
-            $table->id('user_id');
+            $table->id('usuario_id');
             $table->string('nome_fertilizante');
             $table->integer('preco_pago');
             $table->string('unidade_medida');
