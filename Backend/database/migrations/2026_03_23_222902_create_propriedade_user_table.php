@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('equipamentos', function (Blueprint $table) {
+        Schema::create('propriedade_user', function (Blueprint $table) {
             $table->id();
-            $table->id('usuario_id');
-            $table->integer('mac_address');
-            $table->string('nome_apelido');
+            $table->foreignId('usuario_id')->constrained()->onDelete('cascade');
+            $table->foreignId('propriedade_id')->constrained()->onDelete('cascade');
+            $table->string('nivel_acesso')->default('leitor');
+            $table->unique(['usuario_id', 'propriedade_id']);
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('equipamentos');
+        Schema::dropIfExists('propriedade_user');
     }
 };

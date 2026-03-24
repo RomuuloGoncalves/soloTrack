@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('area_insumo', function (Blueprint $table) {
+        Schema::create('equipamento_sensor', function (Blueprint $table) {
             $table->id();
-            $table->id('area_id');
-            $table->id('insumo_id');
-            $table->integer('quantidade_padrao');
+            $table->foreignId('equipamento_id')->constrained()->onDelete('cascade');
+            $table->foreignId('tipo_sensor_id')->constrained()->onDelete('cascade');
+            $table->integer('porta_conexao');
+            $table->unique(['equipamento_id', 'tipo_sensor_id']);
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('area_insumo');
+        Schema::dropIfExists('equipamento_sensor');
     }
 };

@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('equipamento_sensor', function (Blueprint $table) {
+        Schema::create('equipamentos', function (Blueprint $table) {
             $table->id();
-            $table->id('equipamento_id');
-            $table->id('tipo_sensor_id');
-            $table->integer('porta_conexao');
+            $table->foreignId('usuario_id')->constrained()->onDelete('cascade');
+            $table->string('mac_address', 17)->unique();
+            $table->string('nome_apelido')->nullable();
+            $table->boolean('ativo')->default(true);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('equipamento_sensor');
+        Schema::dropIfExists('equipamentos');
     }
 };

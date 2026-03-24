@@ -14,12 +14,13 @@ return new class extends Migration
         Schema::create('propriedades', function (Blueprint $table) {
             $table->id();
             $table->string('nome');
-            $table->sring('cidade');
-            $table->string('estado');
-            $table->decimal('latitude', 10, 8);
-            $table->decimal('longitude', 11, 8);
-            $table->decimal('tamanho_hectares', 100, 2); 
+            $table->string('cidade')->nullable();
+            $table->string('estado', 2)->nullable();
+            $table->decimal('latitude', 10, 8)->nullable();
+            $table->decimal('longitude', 11, 8)->nullable();
+            $table->decimal('tamanho_hectares', 10, 2)->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

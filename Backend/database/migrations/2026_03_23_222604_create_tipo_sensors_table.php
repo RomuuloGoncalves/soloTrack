@@ -15,7 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('grandeza');
             $table->string('unidade_medida');
+            $table->unique(['grandeza', 'unidade_medida']);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

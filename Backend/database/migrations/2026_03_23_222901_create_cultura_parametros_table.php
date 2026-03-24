@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('cultura_parametros', function (Blueprint $table) {
             $table->id();
-            $table->id('cultura_parametros');
-            $table->id('tipo_sensor_id');
+            $table->foreignId('cultura_id')->constrained()->onDelete('cascade');
+            $table->foreignId('tipo_sensor_id')->constrained()->onDelete('cascade');
             $table->decimal('valor_minimo', 10, 2);
             $table->decimal('valor_maximo', 10, 2);
+            $table->unique(['cultura_id', 'tipo_sensor_id']);
             $table->timestamps();
         });
     }

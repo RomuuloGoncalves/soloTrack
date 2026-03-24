@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('leituras', function (Blueprint $table) {
             $table->id();
-            $table->id('area_id');
-            $table->id('equipamento_id');
-            $table->id('tipo_sensor_id');
-            $table->decimal('valor_lido');
+            $table->foreignId('area_plantio_id')->constrained()->onDelete('cascade');
+            $table->foreignId('equipamento_id')->constrained()->onDelete('cascade');
+            $table->foreignId('tipo_sensor_id')->constrained()->onDelete('restrict');
+            $table->decimal('valor_lido', 10, 4);
+            $table->timestamp('data_leitura')->nullable()->index();
             $table->timestamps();
         });
     }

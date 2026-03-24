@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('culturas', function (Blueprint $table) {
             $table->id();
-            $table->string('nome_cultura');
+            $table->string('nome_cultura')->unique();
+            $table->text('descricao')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

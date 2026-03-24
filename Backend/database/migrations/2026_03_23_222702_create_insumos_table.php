@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('area_cultura', function (Blueprint $table) {
+        Schema::create('insumos', function (Blueprint $table) {
             $table->id();
-            $table->id('area_id');
-            $table->id('cultura_id');
-            $table->date('data_plantio');
-            $table->date('data_colheita');
+            $table->foreignId('usuario_id')->constrained()->onDelete('cascade');
+            $table->string('nome_fertilizante');
+            $table->decimal('preco_pago', 10, 2)->nullable();
+            $table->string('unidade_medida');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('area_cultura');
+        Schema::dropIfExists('insumos');
     }
 };

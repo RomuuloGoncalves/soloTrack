@@ -13,14 +13,15 @@ return new class extends Migration
     {
         Schema::create('area_plantios', function (Blueprint $table) {
             $table->id();
-            $table->id('propriedade_id');
-            $table->strind('qr_code_hash');
+            $table->foreignId('propriedade_id')->constrained()->onDelete('cascade');
+            $table->string('qr_code_hash')->unique();
             $table->string('nome_area');
-            $table->decimal('tamanho_area_m2', 10, 2);
-            $table->decimal('latitude', 10, 8);
-            $table->decimal('longitude', 11, 8);
+            $table->decimal('tamanho_area_m2', 10, 2)->nullable();
+            $table->decimal('latitude', 10, 8)->nullable();
+            $table->decimal('longitude', 11, 8)->nullable();
             $table->timestamps();
-            });
+            $table->softDeletes();
+        });
     }
 
     /**
