@@ -1,0 +1,34 @@
+FROM php:8.2-cli
+
+# 1. Instala dependências do sistema e extensões do PHP
+RUN apt-get update && apt-get install -y \
+    libzip-dev \
+    libsqlite3-dev \
+    libpq-dev \
+    zip \
+    unzip \
+    curl \
+    && docker-php-ext-install pdo_mysql pdo_pgsql pdo_sqlite zip
+    
+# 2. Instala o Composer globalmente
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# 3. Define o diretório de trabalho
+WORKDIR /app
+
+# 4. Copia TODOS os arquivos da sua pasta Backend para dentro do container do Render
+COPY . .
+
+# 5. Instala as dependências do Laravel (ignorando pacotes de dev)
+RUN composer install --no-dev --optimize-autoloader
+
+# 6. Limpa os caches para evitar problemas em produção
+RUN php artisan config:clear \
+    && php artisan route:clear \
+    && php artisan view:clear
+
+# 7. Expõe a porta
+EXPOSE 8000
+
+# 8. Comando que o Render vai executar para iniciar o seu backend
+CMD php artisan serve --host=0.0.0.0 --port=8000
