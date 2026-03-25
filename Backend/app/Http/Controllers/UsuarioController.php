@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Usuario;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreUsuarioRequest;
 
 class UsuarioController extends Controller
 {
@@ -12,7 +13,7 @@ class UsuarioController extends Controller
      */
     public function index()
     {
-        return Usuario::all();
+        return $this->success(Usuario::all(), "Usuários encontrados");
     }
 
     /**
@@ -26,9 +27,11 @@ class UsuarioController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreUsuarioRequest $request)
     {
-        //
+        $usuario = Usuario::create($request->validated());
+
+        return $this->success($usuario, 'Usuário criado', 201);
     }
 
     /**
@@ -36,7 +39,11 @@ class UsuarioController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $usuario = Usuario::find($id);
+        if(!$usuario){
+            return $this->error("Usuário não encontrado");
+        }
+        return $this->success($usuario, "Usuário encontrado");
     }
 
     /**
