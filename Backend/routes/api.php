@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsuarioController;
+use Illuminate\Support\Facades\Artisan;
 
 Route::apiResource('usuarios', UsuarioController::class);
 Route::apiResource('culturas', UsuarioController::class);
@@ -32,7 +33,7 @@ Route::get('/internal/run-migrations-once', function () {
             'output_refresh_seed' => $output_refresh_seed
         ], 200);
 
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         return response()->json([
             'status' => 'error',
             'message' => 'Ocorreu um erro ao executar as migrações.',
