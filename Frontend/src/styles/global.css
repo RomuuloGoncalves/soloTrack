@@ -28,12 +28,14 @@
   /* Theme Light Default*/
   --color-bg: #F5F6FA;
   --color-text: #000000;
+  --theme-logo: url('../assets/images/Light-logo.svg');
 }
 
 /* Dark Theme */
 [data-theme="dark"] {
   --color-bg: #16171D;
   --color-text: #FFFFFF;
+  --theme-logo: url('../assets/images/Dark-Logo.svg');
 }
 
 /* GLOBAL */
