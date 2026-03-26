@@ -1,7 +1,7 @@
 .pageWrapper {
   display: flex;
   justify-content: center;
-  min-height: 100vh;
+  min-height: 100dvh;
   width: 100%;
   background-color: var(--color-bg);
 }
@@ -210,7 +210,7 @@
 .heroImage {
   width: 100%;
   max-width: 65%;
-  height: 70vh;
+  height: 70dvh;
   background-image: var(--theme-logo);
   background-repeat: no-repeat;
   background-position: center;
@@ -236,6 +236,6 @@
   }
   
   .formSection {
-    min-height: 80vh;
+    min-height: 80dvh;
   }
 }
