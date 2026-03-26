@@ -14,7 +14,7 @@ function Login() {
             <div className={style.formContainer}>
               <div className={style.logoContainer}>
                 <h1 className={style.titleLogo}>
-                  <span className={style.titleGreen}>Solo</span><span className={style.titleDark}>Track.</span>
+                  <span className={style.titleGreen}>Solo</span>Track.
                 </h1>
               </div>
 
