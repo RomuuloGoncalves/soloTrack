@@ -12,7 +12,7 @@ class CulturaController extends Controller
      */
     public function index()
     {
-        //
+        return Cultura :: all();
     }
 
     /**
@@ -28,7 +28,7 @@ class CulturaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $cultura = Cultura :: create($request->all());
     }
 
     /**
@@ -36,7 +36,7 @@ class CulturaController extends Controller
      */
     public function show(Cultura $cultura)
     {
-        //
+        return Cultura :: findOrFail($id);
     }
 
     /**
@@ -44,7 +44,7 @@ class CulturaController extends Controller
      */
     public function edit(Cultura $cultura)
     {
-        //
+       
     }
 
     /**
@@ -60,6 +60,7 @@ class CulturaController extends Controller
      */
     public function destroy(Cultura $cultura)
     {
-        //
+        $cultura->delete();
+        return $this->sucesso($cultura, "deletado com sucesso");
     }
 }
