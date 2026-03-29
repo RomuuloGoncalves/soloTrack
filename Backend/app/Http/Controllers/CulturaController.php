@@ -12,7 +12,7 @@ class CulturaController extends Controller
      */
     public function index()
     {
-        return Cultura :: all();
+        return Cultura::all();
     }
 
     /**
@@ -44,7 +44,7 @@ class CulturaController extends Controller
      */
     public function edit(Cultura $cultura)
     {
-       
+
     }
 
     /**
