@@ -12,7 +12,7 @@ class EquipamentoController extends Controller
      */
     public function index()
     {
-        //
+        return Equipamento :: all();
     }
 
     /**
@@ -28,7 +28,7 @@ class EquipamentoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $equipamento = Equipamento :: create($request->all());
     }
 
     /**
@@ -36,7 +36,7 @@ class EquipamentoController extends Controller
      */
     public function show(Equipamento $equipamento)
     {
-        //
+        return Equipamento :: findOrFail($equipamento);
     }
 
     /**
@@ -60,6 +60,7 @@ class EquipamentoController extends Controller
      */
     public function destroy(Equipamento $equipamento)
     {
-        //
+        $equipamento->delete();
+        return $this->sucess($equipamento, "deletado com sucesso.");
     }
 }

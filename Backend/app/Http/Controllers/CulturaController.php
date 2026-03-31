@@ -28,7 +28,7 @@ class CulturaController extends Controller
      */
     public function store(Request $request)
     {
-        $cultura = Cultura :: create($request->all());
+        $cultura = Cultura :: create($request->validated());
     }
 
     /**
@@ -36,7 +36,7 @@ class CulturaController extends Controller
      */
     public function show(Cultura $cultura)
     {
-        return Cultura :: findOrFail($id);
+        return Cultura :: findOrFail($cultura);
     }
 
     /**
@@ -61,6 +61,6 @@ class CulturaController extends Controller
     public function destroy(Cultura $cultura)
     {
         $cultura->delete();
-        return $this->sucesso($cultura, "deletado com sucesso");
+        return $this->sucess($cultura, "deletado com sucesso.");
     }
 }

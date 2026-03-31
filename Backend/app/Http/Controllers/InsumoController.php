@@ -12,7 +12,7 @@ class InsumoController extends Controller
      */
     public function index()
     {
-        //
+        return Insumo :: all();
     }
 
     /**
@@ -28,7 +28,7 @@ class InsumoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $insumo = Insumo :: create($request->all());
     }
 
     /**
@@ -36,7 +36,7 @@ class InsumoController extends Controller
      */
     public function show(Insumo $insumo)
     {
-        //
+        return Insumo :: findOrFail($insumo);
     }
 
     /**
@@ -60,6 +60,7 @@ class InsumoController extends Controller
      */
     public function destroy(Insumo $insumo)
     {
-        //
+        $insumo->delete();
+        return $this->sucess($insumo, "deletado com sucesso");
     }
 }

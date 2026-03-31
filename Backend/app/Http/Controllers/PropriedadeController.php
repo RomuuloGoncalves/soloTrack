@@ -12,7 +12,7 @@ class PropriedadeController extends Controller
      */
     public function index()
     {
-        //
+        return Propriedade::all();
     }
 
     /**
@@ -28,7 +28,7 @@ class PropriedadeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $propriedade = Propriedade :: create($request->all());
     }
 
     /**
@@ -36,7 +36,7 @@ class PropriedadeController extends Controller
      */
     public function show(Propriedade $propriedade)
     {
-        //
+        return Propriedade :: findOrFail($propriedade);
     }
 
     /**
@@ -60,6 +60,7 @@ class PropriedadeController extends Controller
      */
     public function destroy(Propriedade $propriedade)
     {
-        //
+        $propriedade->delete();
+        return $this->sucess($propriedade, "deletado com sucesso.")
     }
 }
