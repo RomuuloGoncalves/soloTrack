@@ -1,0 +1,8 @@
+botao{
+    padding: 10px 20px,
+    backgroundColor: var(--color-secondary),
+    color: var(--color-white),
+    textDecoration: 'none',
+    borderRadius: '8px',
+    fontWeight: 'bold'
+}

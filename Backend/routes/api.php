@@ -1,13 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UsuarioController;
-use Illuminate\Support\Facades\Artisan;
+use App\Http\Controllers\ChatController;
 
 Route::apiResource('usuarios', UsuarioController::class);
 Route::apiResource('culturas', UsuarioController::class);
 Route::apiResource('propriedades', UsuarioController::class);
 
+Route::post('/mcp/chat', [ChatController::class, 'chat']);
 
 Route::get('/hello', function () {
     return response()->json(['message' => 'Hello World! A API esta no ar.'], 200);

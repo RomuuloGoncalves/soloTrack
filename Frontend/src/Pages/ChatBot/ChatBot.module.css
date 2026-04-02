@@ -139,6 +139,18 @@
   margin-top: 5px;
 }
 
+.spinner {
+  animation: spin 1s linear infinite;
+  margin-right: 10px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 .footerSection {
   width: 50vw;
   max-width: 1000px;

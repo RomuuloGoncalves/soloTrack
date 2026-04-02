@@ -1,7 +1,8 @@
 import { 
   LayoutGrid, Layers, Banknote, ClipboardList, TrendingUp, 
-  Package, Sparkles, Settings, X 
+  Package, Sparkles, Settings, X, Sun, Moon 
 } from 'lucide-react';
+import { useTheme } from '../../hooks/useTheme';
 import styles from './Sidebar.module.css';
 
 interface SidebarProps {
@@ -11,6 +12,7 @@ interface SidebarProps {
 }
 
 export function Sidebar({ isOpen, onClose, logo }: SidebarProps) {
+  const { theme, toggleTheme } = useTheme();
   return (
     <>
       <div 
@@ -42,6 +44,10 @@ export function Sidebar({ isOpen, onClose, logo }: SidebarProps) {
         </nav>
 
         <div className={styles.sidebarFooter}>
+          <div className={styles.navItem} onClick={toggleTheme}>
+            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            {theme === 'dark' ? 'Tema Claro' : 'Tema Escuro'}
+          </div>
           <div className={styles.navItem}><Settings size={18} /> Configuração</div>
         </div>
       </aside>

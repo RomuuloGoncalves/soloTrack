@@ -25,7 +25,7 @@
   --input-bg: #FFFFFF;
   --input-text: #121417;
   --border-color: rgba(255, 255, 255, 0.1);
-  --logo-url: url('/workspaces/soloTrack/Frontend/src/assets/images/Dark-Logo.svg');
+  --logo-url: url('../../../assets/images/Dark-Logo.svg');
 }
 
 .sidebar {

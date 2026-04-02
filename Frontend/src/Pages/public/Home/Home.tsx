@@ -31,25 +31,14 @@ function PublicHome() {
     // Depois tem que tirar isso aqui, é só pra ficar facil de navegar
     <div style={{ padding: '40px', fontFamily: 'var(--font-family)' }}>
       <nav style={{ marginBottom: '30px', display: 'flex', gap: '15px' }}>
-        <Link to="/login" style={{
-          padding: '10px 20px',
-          backgroundColor: 'var(--color-secondary)',
-          color: 'var(--color-white)',
-          textDecoration: 'none',
-          borderRadius: '8px',
-          fontWeight: 'bold'
-        }}>
+        <Link to="/login" style={{ padding: '10px 20px', backgroundColor: 'var(--color-secondary)', }}>
           Ir para Login
         </Link>
-        <Link to="/signup" style={{
-          padding: '10px 20px',
-          border: '2px solid var(--color-secondary)',
-          color: 'var(--color-secondary)',
-          textDecoration: 'none',
-          borderRadius: '8px',
-          fontWeight: 'bold'
-        }}>
+        <Link to="/signup" style={{ padding: '10px 20px', backgroundColor: 'var(--color-secondary)', }}>
           Cadastrar-se
+        </Link>
+        <Link to="/chatbot" style={{ padding: '10px 20px', backgroundColor: 'var(--color-secondary)', }}>
+          Chat
         </Link>
       </nav>
 
