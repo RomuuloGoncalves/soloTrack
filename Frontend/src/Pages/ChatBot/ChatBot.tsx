@@ -43,7 +43,7 @@ export function ChatBot() {
 
       const candidates = response.data.candidates;
       if (!candidates || candidates.length === 0) {
-        throw new Error('A IA não retornou uma resposta válida (pode ter sido bloqueada por filtros de segurança).');
+        throw new Error('Desculpe, mas não obtemos uma mensagem válida. Tente novamente mais tarde. Obrigado pela compreenção!');
       }
 
       const aiResponse = candidates[0].content?.parts?.[0]?.text || 'Resposta vazia da IA.';
@@ -109,7 +109,7 @@ export function ChatBot() {
                   <img src={lightLogo} className={styles.aiIcon} alt="AI Icon" />
                   <div className={styles.aiText}>
                     <Loader2 className={styles.spinner} size={20} />
-                    <span>O analista está processando os dados...</span>
+                    <span>SoloTrack está processando os dados...</span>
                   </div>
                 </div>
               )}
