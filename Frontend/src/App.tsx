@@ -8,12 +8,13 @@ import NotFoundPage from "./Pages/public/NotFoundPage/NotFoundPage";
 import ChatBot from "./Pages/ChatBot/ChatBot";
 
 import { useTheme } from "./hooks/useTheme";
+import { ToastProvider } from "./contexts/ToastContext";
 
 function App() {
   useTheme(); // Inicializa o tema e gerencia o data-theme
 
   return (
-    <>
+    <ToastProvider>
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -23,7 +24,7 @@ function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Router>
-    </>
+    </ToastProvider>
   );
 }
 

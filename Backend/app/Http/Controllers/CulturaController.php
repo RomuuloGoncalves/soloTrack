@@ -12,7 +12,7 @@ class CulturaController extends Controller
      */
     public function index()
     {
-        return Cultura::all();
+        return $this->success(Cultura::all(), "Culturas encontradas");
     }
 
     /**
@@ -28,29 +28,35 @@ class CulturaController extends Controller
      */
     public function store(Request $request)
     {
-        $cultura = Cultura :: create($request->validated());
+        $cultura = Cultura::create($request->validated());
+
+        return $this->success($cultura, 'Cultura criada', 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Cultura $cultura)
+    public function show(string $id)
     {
-        return Cultura :: findOrFail($cultura);
+        $cultura = Cultura::find($id);
+        if (!$cultura) {
+            return $this->error("Cultura não encontrada", 404);
+        }
+        return $this->success($cultura, "Cultura encontrada");
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Cultura $cultura)
+    public function edit(string $id)
     {
-
+        //
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Cultura $cultura)
+    public function update(Request $request, string $id)
     {
         //
     }
@@ -58,9 +64,13 @@ class CulturaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Cultura $cultura)
+    public function destroy(string $id)
     {
+        $cultura = Cultura::find($id);
+        if (!$cultura) {
+            return $this->error("Cultura não encontrada", 404);
+        }
         $cultura->delete();
-        return $this->sucess($cultura, "deletado com sucesso.");
+        return $this->success($cultura, "Cultura deletada com sucesso");
     }
 }

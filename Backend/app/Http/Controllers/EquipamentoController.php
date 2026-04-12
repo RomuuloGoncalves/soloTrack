@@ -12,7 +12,7 @@ class EquipamentoController extends Controller
      */
     public function index()
     {
-        return Equipamento :: all();
+        return $this->success(Equipamento::all(), "Equipamentos encontrados");
     }
 
     /**
@@ -28,21 +28,27 @@ class EquipamentoController extends Controller
      */
     public function store(Request $request)
     {
-        $equipamento = Equipamento :: create($request->all());
+        $equipamento = Equipamento::create($request->validated());
+
+        return $this->success($equipamento, 'Equipamento criado', 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Equipamento $equipamento)
+    public function show(string $id)
     {
-        return Equipamento :: findOrFail($equipamento);
+        $equipamento = Equipamento::find($id);
+        if (!$equipamento) {
+            return $this->error("Equipamento não encontrado", 404);
+        }
+        return $this->success($equipamento, "Equipamento encontrado");
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Equipamento $equipamento)
+    public function edit(string $id)
     {
         //
     }
@@ -50,7 +56,7 @@ class EquipamentoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Equipamento $equipamento)
+    public function update(Request $request, string $id)
     {
         //
     }
@@ -58,9 +64,13 @@ class EquipamentoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Equipamento $equipamento)
+    public function destroy(string $id)
     {
+        $equipamento = Equipamento::find($id);
+        if (!$equipamento) {
+            return $this->error("Equipamento não encontrado", 404);
+        }
         $equipamento->delete();
-        return $this->sucess($equipamento, "deletado com sucesso.");
+        return $this->success($equipamento, "Equipamento deletado com sucesso");
     }
 }

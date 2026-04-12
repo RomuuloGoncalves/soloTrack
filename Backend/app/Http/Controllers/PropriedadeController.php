@@ -12,7 +12,7 @@ class PropriedadeController extends Controller
      */
     public function index()
     {
-        return Propriedade::all();
+        return $this->success(Propriedade::all(), "Propriedades encontradas");
     }
 
     /**
@@ -28,21 +28,27 @@ class PropriedadeController extends Controller
      */
     public function store(Request $request)
     {
-        $propriedade = Propriedade :: create($request->all());
+        $propriedade = Propriedade::create($request->validated());
+
+        return $this->success($propriedade, 'Propriedade criada', 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Propriedade $propriedade)
+    public function show(string $id)
     {
-        return Propriedade :: findOrFail($propriedade);
+        $propriedade = Propriedade::find($id);
+        if (!$propriedade) {
+            return $this->error("Propriedade não encontrada", 404);
+        }
+        return $this->success($propriedade, "Propriedade encontrada");
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Propriedade $propriedade)
+    public function edit(string $id)
     {
         //
     }
@@ -50,7 +56,7 @@ class PropriedadeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Propriedade $propriedade)
+    public function update(Request $request, string $id)
     {
         //
     }
@@ -58,9 +64,13 @@ class PropriedadeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Propriedade $propriedade)
+    public function destroy(string $id)
     {
+        $propriedade = Propriedade::find($id);
+        if (!$propriedade) {
+            return $this->error("Propriedade não encontrada", 404);
+        }
         $propriedade->delete();
-        return $this->sucess($propriedade, "deletado com sucesso.")
+        return $this->success($propriedade, "Propriedade deletada com sucesso");
     }
 }

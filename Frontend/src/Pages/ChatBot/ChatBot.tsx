@@ -1,5 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Menu, SendHorizontal, Loader2 } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { useTheme } from '../../hooks/useTheme';
 import { Sidebar } from '../../Components/Sidebar/Sidebar';
 import styles from './ChatBot.module.css';
@@ -99,9 +101,13 @@ export function ChatBot() {
               {messages.map((msg, index) => (
                 <div key={index} className={msg.role === 'user' ? styles.userRow : styles.aiRow}>
                   {msg.role === 'ai' && <img src={lightLogo} className={styles.aiIcon} alt="AI Icon" />}
-                  <div className={msg.role === 'user' ? styles.userBubble : styles.aiText}>
-                    {msg.content}
-                  </div>
+                  {msg.role === 'user' ? (
+                    <div className={styles.userBubble}>{msg.content}</div>
+                  ) : (
+                    <div className={styles.aiText}>
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
+                    </div>
+                  )}
                 </div>
               ))}
               {isLoading && (

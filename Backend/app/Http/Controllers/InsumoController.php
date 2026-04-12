@@ -12,7 +12,7 @@ class InsumoController extends Controller
      */
     public function index()
     {
-        return Insumo :: all();
+        return $this->success(Insumo::all(), "Insumos encontrados");
     }
 
     /**
@@ -28,21 +28,27 @@ class InsumoController extends Controller
      */
     public function store(Request $request)
     {
-        $insumo = Insumo :: create($request->all());
+        $insumo = Insumo::create($request->validated());
+
+        return $this->success($insumo, 'Insumo criado', 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Insumo $insumo)
+    public function show(string $id)
     {
-        return Insumo :: findOrFail($insumo);
+        $insumo = Insumo::find($id);
+        if (!$insumo) {
+            return $this->error("Insumo não encontrado", 404);
+        }
+        return $this->success($insumo, "Insumo encontrado");
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Insumo $insumo)
+    public function edit(string $id)
     {
         //
     }
@@ -50,7 +56,7 @@ class InsumoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Insumo $insumo)
+    public function update(Request $request, string $id)
     {
         //
     }
@@ -58,9 +64,13 @@ class InsumoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Insumo $insumo)
+    public function destroy(string $id)
     {
+        $insumo = Insumo::find($id);
+        if (!$insumo) {
+            return $this->error("Insumo não encontrado", 404);
+        }
         $insumo->delete();
-        return $this->sucess($insumo, "deletado com sucesso");
+        return $this->success($insumo, "Insumo deletado com sucesso");
     }
 }

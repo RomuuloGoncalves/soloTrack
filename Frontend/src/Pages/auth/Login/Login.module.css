@@ -109,6 +109,37 @@
   gap: 1.25rem;
 }
 
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  width: 100%;
+}
+
+.inputError {
+  border-color: #e53e3e !important;
+  box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.15) !important;
+}
+
+.errorMessage {
+  font-size: 0.8rem;
+  font-family: var(--font-family);
+  color: #e53e3e;
+  padding-left: 0.25rem;
+}
+
+.errorGeneral {
+  font-size: 0.85rem;
+  font-family: var(--font-family);
+  color: #e53e3e;
+  text-align: center;
+  margin: 0;
+  padding: 0.6rem 0.75rem;
+  background-color: rgba(229, 62, 62, 0.08);
+  border-radius: 6px;
+  border: 1px solid rgba(229, 62, 62, 0.25);
+}
+
 .input {
   width: 100%;
   padding: 1rem 1.25rem;
