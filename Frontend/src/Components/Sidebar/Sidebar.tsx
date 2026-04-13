@@ -1,11 +1,11 @@
 import { 
   LayoutGrid, Layers, Banknote, ClipboardList, TrendingUp, 
-  Package, Sparkles, Settings, X, Sun, Moon 
+  Package, Sparkles, Settings, X, Sun, Moon, Menu
 } from 'lucide-react';
 import { useTheme } from '../../hooks/useTheme';
 import styles from './Sidebar.module.css';
 import { useState } from 'react';
-import { SettingsModal } from '../SettingsModal/SettingsModal';
+import { ConfiguracaoModal } from '../ConfiguracaoModal/ConfiguracaoModal';
 import { Link } from 'react-router-dom';
 
 interface SidebarProps {
@@ -15,7 +15,7 @@ interface SidebarProps {
   logo: string;
 }
 
-export function Sidebar({ isOpen, onClose, logo }: SidebarProps) {
+export function Sidebar({ isOpen, onClose, onOpen, logo }: SidebarProps) {
   const { theme, toggleTheme } = useTheme();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
@@ -25,13 +25,21 @@ export function Sidebar({ isOpen, onClose, logo }: SidebarProps) {
 
   return (
     <>
+      <div className="hamburguerWrapper">
+        {!isOpen && (
+        <button className={styles.hamburger} onClick={onOpen} aria-label="Abrir menu">
+          <Menu size={24} />
+        </button>
+      )}
+      </div>
+
       <div 
         className={`${styles.overlay} ${isOpen ? styles.overlayVisible : ''}`} 
         onClick={onClose} 
       />
 
       <aside className={`${styles.sidebar} ${isOpen ? styles.sidebarOpen : ''}`}>
-        <button className={styles.closeButton} onClick={onClose}>
+        <button className={styles.closeButton} onClick={onClose} aria-label="Fechar menu">
           <X size={24} />
         </button>
 
@@ -42,7 +50,7 @@ export function Sidebar({ isOpen, onClose, logo }: SidebarProps) {
 
         <nav className={styles.navSection}>
           <p className={styles.sectionTitle}>Organização</p>
-          <Link to="" className={styles.navItem}><LayoutGrid size={18} /> Visão Geral</Link>
+          <Link to="/" className={styles.navItem}><LayoutGrid size={18} /> Visão Geral</Link>
           <Link to="" className={styles.navItem}><Layers size={18} /> Gestão</Link>
           <Link to="" className={styles.navItem}><Banknote size={18} /> Finanças</Link>
           <Link to="/Relatorio" className={styles.navItem}><ClipboardList size={18} /> Relatório</Link>
@@ -66,7 +74,7 @@ export function Sidebar({ isOpen, onClose, logo }: SidebarProps) {
         </div>
       </aside>
 
-      <SettingsModal 
+      <ConfiguracaoModal 
         isOpen={isSettingsOpen} 
         onClose={() => setIsSettingsOpen(false)} 
       />

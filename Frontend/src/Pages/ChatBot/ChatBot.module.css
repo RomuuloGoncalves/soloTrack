@@ -12,7 +12,6 @@
   --user-bubble-text: #1E1F24;
   --ai-text-color: #244C4E;
   --scrollbar-page-thumb: rgba(0, 0, 0, 0.1);
-  --hamburger-color: #666666;
 }
 
 :global([data-theme="dark"]) {
@@ -27,7 +26,6 @@
   --user-bubble-text: #1E1F24;
   --ai-text-color: #FFFFFF;
   --scrollbar-page-thumb: rgba(255, 255, 255, 0.1);
-  --hamburger-color: #FFFFFF;
 }
 
 .chatbotLayout {
@@ -51,10 +49,6 @@
 
 .chatActive .chatArea {
   background-color: var(--chat-started-bg) !important;
-}
-
-.hamburgerButton {
-  display: none;
 }
 
 @media (min-width: 769px) {
@@ -346,20 +340,10 @@
 }
 
 @media (max-width: 768px) {
-  .mobileHeader {
-    display: flex;
-    width: 100%;
-    padding: 20px 20px 0;
-    z-index: 10;
-  }
 
-  .hamburgerButton {
-    display: flex;
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    color: var(--hamburger-color);
+  .chatbotLayout {
+    flex-direction: column;
+    padding: 20px 20px 0;
   }
 
   .chatView {
@@ -449,7 +433,7 @@
   padding: 16px;
   font-family: 'Outfit';
   font-size: 12px;
-  color: var(--card-text);
+  color: var(--text-secondary);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
   cursor: pointer;
   font-weight: 500;

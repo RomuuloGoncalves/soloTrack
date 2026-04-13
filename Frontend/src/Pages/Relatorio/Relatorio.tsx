@@ -4,7 +4,7 @@ import darkLogo from '../../assets/images/Dark-Logo.svg';
 import {
   Download, FileText, Search, Calendar,
   Warehouse, Sprout, Thermometer, Droplets,
-  Droplet, Filter, Pipette, ChevronLeft, ChevronRight, Menu
+  Droplet, Filter, Pipette, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { Sidebar } from '../../Components/Sidebar/Sidebar';
 import styles from './Relatorio.module.css';
@@ -28,17 +28,13 @@ export function Relatorio() {
 
   return (
     <div className={styles.pageLayout}>
-      <Sidebar
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
+      <Sidebar 
+        isOpen={isSidebarOpen} 
+        onClose={() => setIsSidebarOpen(false)} 
         onOpen={() => setIsSidebarOpen(true)}
-        logo={logo}
+        logo={logo} 
       />
-
       <main className={styles.mainContent}>
-        <button className={styles.hamburgerButton} onClick={() => setIsSidebarOpen(true)}>
-          <Menu size={24} />
-        </button>
 
         <header className={styles.header}>
           <div className={styles.titleArea}>

@@ -9,7 +9,6 @@
   --table-th: #999999;
   --input-bg: #FAFAFA;
   --input-border: #EAEAEA;
-  --hamburger-color: #666666;
   --status-alerta-bg: #FFE5E5;
   --status-alerta-text: #D20012;
   --status-normal-bg: #E5FFE5;
@@ -25,7 +24,6 @@
   --table-th: #A0A0A0;
   --input-bg: #FFFFFF;
   --input-border: rgba(255, 255, 255, 0.1);
-  --hamburger-color: #FFFFFF;
   --status-alerta-bg: rgba(210, 0, 18, 0.2);
   --status-normal-bg: rgba(46, 204, 113, 0.2);
 }
@@ -43,15 +41,6 @@
   flex: 1;
   padding: 40px;
   overflow-x: hidden;
-}
-
-.hamburgerButton {
-  display: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--hamburger-color);
-  margin-bottom: 20px;
 }
 
 .header {
@@ -279,8 +268,10 @@
 }
 
 @media (max-width: 768px) {
-  .hamburgerButton {
-    display: flex;
+
+  .pageLayout {
+    padding: 20px 20px 0; 
+    flex-direction: column;
   }
 
   .mainContent {

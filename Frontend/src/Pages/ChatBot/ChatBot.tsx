@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Menu, SendHorizontal, Loader2 } from 'lucide-react';
+import { SendHorizontal, Loader2 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useTheme } from '../../hooks/useTheme';
@@ -28,7 +28,6 @@ export function ChatBot() {
     setIsLoading(true);
 
     try {
-      // Formata o histórico para o Gemini
       const geminiHistory = messages.map(msg => ({
         role: msg.role === 'user' ? 'user' : 'model',
         parts: [{ text: msg.content }]
@@ -74,15 +73,11 @@ export function ChatBot() {
       <Sidebar 
         isOpen={isSidebarOpen} 
         onClose={() => setIsSidebarOpen(false)} 
+        onOpen={() => setIsSidebarOpen(true)}
         logo={logo} 
       />
 
       <main className={styles.chatArea}>
-        <header className={styles.mobileHeader}>
-          <button className={styles.hamburgerButton} onClick={toggleSidebar} aria-label="Abrir Menu">
-            <Menu size={24} color={"#244c4e"} />
-          </button>
-        </header>
 
         {!isChatStarted && <div className={styles.glowTop}></div>}
 

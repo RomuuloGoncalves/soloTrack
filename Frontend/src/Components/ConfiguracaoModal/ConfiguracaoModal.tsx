@@ -1,13 +1,13 @@
 import { LogOut, Sun, Monitor, Moon, X } from 'lucide-react';
 import { useTheme } from '../../hooks/useTheme';
-import styles from './SettingsModal.module.css';
+import styles from './ConfiguracaoModal.module.css';
 
-interface SettingsModalProps {
+interface ConfiguracaoModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
+export function ConfiguracaoModal({ isOpen, onClose }: ConfiguracaoModalProps) {
   const { theme, setTheme } = useTheme();
 
   if (!isOpen) return null;
