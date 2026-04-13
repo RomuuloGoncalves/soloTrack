@@ -1,0 +1,244 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&display=swap');
+
+:root {
+  --modal-bg: #F5F6FA;
+  --modal-card-bg: #FFFFFF;
+  --modal-text: #1E1F24;
+  --modal-input-border: #DDDDDD;
+  --modal-input-bg: #FFFFFF;
+  --modal-input-text: #1E1F24;
+  --modal-section-title: #444444
+}
+
+:global([data-theme="dark"]) {
+  --modal-bg: #121417;
+  --modal-card-bg: #1E1F24;
+  --modal-text: #FFFFFF;
+  --modal-input-border: #333333;
+  --modal-input-bg: #121417;
+  --modal-input-text: #FFFFFF;
+  --modal-section-title: #A0A0A0
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999
+}
+
+.modal {
+  background: var(--modal-bg);
+  width: 968px;
+  max-width: 90vw;
+  height: auto;
+  max-height: 95vh;
+  border-radius: 24px;
+  padding: 40px;
+  position: relative;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2)
+}
+
+.modal::-webkit-scrollbar {
+  width: 0px
+}
+
+.closeBtn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  color: var(--modal-text);
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.2s
+}
+
+.closeBtn:hover {
+  opacity: 1
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--modal-text);
+  align-self: flex-start;
+  margin-bottom: 30px
+}
+
+.section {
+  width: 100%;
+  margin-bottom: 30px
+}
+
+.sectionTitle {
+  font-size: 18px;
+  color: var(--modal-section-title);
+  margin-bottom: 15px;
+  font-weight: 500;
+  text-align: center
+}
+
+.card {
+  background: var(--modal-card-bg);
+  border-radius: 16px;
+  padding: 24px;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto
+}
+
+.label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  text-align: left;
+  color: var(--modal-text)
+}
+
+.themeSwitcher {
+  display: flex;
+  background: var(--modal-bg);
+  border-radius: 12px;
+  padding: 4px;
+  gap: 4px
+}
+
+.themeBtn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 10px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #666;
+  transition: all 0.2s;
+  font-weight: 500;
+  white-space: nowrap
+}
+
+.themeBtn.active {
+  background: #B6FF9C;
+  color: #244C4E;
+  font-weight: 600
+}
+
+.inputGroup {
+  margin-bottom: 15px;
+  text-align: left
+}
+
+.inputGroup label {
+  display: block;
+  font-size: 14px;
+  color: var(--modal-text);
+  margin-bottom: 6px
+}
+
+.inputGroup input {
+  width: 100%;
+  padding: 12px;
+  background: var(--modal-input-bg);
+  border: 1px solid var(--modal-input-border);
+  color: var(--modal-input-text);
+  border-radius: 10px;
+  outline: none
+}
+
+.actionButtons {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px
+}
+
+.confirmBtn {
+  flex: 1;
+  background: #2ECC71;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer
+}
+
+.cancelBtn {
+  flex: 1;
+  background: #D20012;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer
+}
+
+.logoutBtn {
+  margin-top: 10px;
+  background: var(--modal-card-bg);
+  border: 1px solid var(--modal-input-border);
+  color: #D20012;
+  padding: 12px 60px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+  cursor: pointer
+}
+
+@media (max-width:768px) {
+  .modal {
+    padding: 30px 15px;
+    max-height: 92vh
+  }
+
+  .card {
+    padding: 16px
+  }
+
+  .themeSwitcher {
+    gap: 2px;
+    padding: 2px
+  }
+
+  .themeBtn {
+    padding: 8px 4px;
+    font-size: 12px;
+    gap: 4px
+  }
+
+  .actionButtons {
+    gap: 10px
+  }
+
+  .confirmBtn,
+  .cancelBtn {
+    padding: 12px;
+    font-size: 14px
+  }
+
+  .logoutBtn {
+    width: 100%;
+    padding: 12px 0;
+    justify-content: center
+  }
+}

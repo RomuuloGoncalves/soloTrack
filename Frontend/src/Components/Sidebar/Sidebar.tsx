@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { 
   LayoutGrid, Layers, Banknote, ClipboardList, TrendingUp, 
   Package, Sparkles, Settings, X, Sun, Moon 
 } from 'lucide-react';
 import { useTheme } from '../../hooks/useTheme';
+import { SettingsModal } from '../SettingsModal/SettingsModal';
 import styles from './Sidebar.module.css';
 
 interface SidebarProps {
@@ -13,6 +15,8 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, onClose, logo }: SidebarProps) {
   const { theme, toggleTheme } = useTheme();
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
   return (
     <>
       <div 
@@ -37,7 +41,7 @@ export function Sidebar({ isOpen, onClose, logo }: SidebarProps) {
           <div className={styles.navItem}><Banknote size={18} /> Finanças</div>
           <div className={styles.navItem}><ClipboardList size={18} /> Relatório</div>
           
-          <p className={styles.sectionTitle} style={{marginTop: '20px'}}>Funções</p>
+          <p className={styles.sectionTitle} style={{ marginTop: '20px' }}>Funções</p>
           <div className={styles.navItem}><TrendingUp size={18} /> Projeção</div>
           <div className={styles.navItem}><Package size={18} /> Dispositivos</div>
           <div className={styles.navItem}><Sparkles size={18} /> Suporte</div>
@@ -48,9 +52,17 @@ export function Sidebar({ isOpen, onClose, logo }: SidebarProps) {
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
             {theme === 'dark' ? 'Tema Claro' : 'Tema Escuro'}
           </div>
-          <div className={styles.navItem}><Settings size={18} /> Configuração</div>
+          
+          <div className={styles.navItem} onClick={() => setIsSettingsOpen(true)}>
+            <Settings size={18} /> Configuração
+          </div>
         </div>
       </aside>
+
+      <SettingsModal 
+        isOpen={isSettingsOpen} 
+        onClose={() => setIsSettingsOpen(false)} 
+      />
     </>
   );
 }
