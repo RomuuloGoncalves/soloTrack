@@ -1,34 +1,58 @@
 import { useState, useEffect } from 'react';
 
-export type Theme = 'light' | 'dark' | 'system';
+export type ThemeMode = 'light' | 'dark' | 'system';
+
+let globalTheme: ThemeMode = (typeof window !== 'undefined' 
+  ? (localStorage.getItem('solo-track-mode') as ThemeMode) || 'system' 
+  : 'system');
+
+const listeners = new Set<(theme: ThemeMode) => void>();
 
 export function useTheme() {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    return (localStorage.getItem('theme') as Theme) || 'system';
-  });
+  const [theme, setInternalTheme] = useState<ThemeMode>(globalTheme);
 
-  const setTheme = (newTheme: Theme) => {
-    setThemeState(newTheme);
-    localStorage.setItem('theme', newTheme);
-  };
+  useEffect(() => {
+    listeners.add(setInternalTheme);
+    return () => {
+      listeners.delete(setInternalTheme);
+    };
+  }, []);
 
-  const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
+  const setTheme = (newMode: ThemeMode) => {
+    globalTheme = newMode;
+    localStorage.setItem('solo-track-mode', newMode);
+    
+    listeners.forEach((update) => update(newMode));
   };
 
   useEffect(() => {
     const root = window.document.documentElement;
-    
-    const resolveTheme = (t: Theme) => {
-      if (t === 'system') {
-        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+
+    const applyTheme = () => {
+      let effectiveTheme: 'light' | 'dark';
+      if (globalTheme === 'system') {
+        effectiveTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      } else {
+        effectiveTheme = globalTheme;
       }
-      return t;
+      root.setAttribute('data-theme', effectiveTheme);
     };
 
-    const activeTheme = resolveTheme(theme);
-    root.setAttribute('data-theme', activeTheme);
+    applyTheme();
+
+    if (globalTheme === 'system') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const handleChange = () => applyTheme();
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
+    }
   }, [theme]);
+
+  const toggleTheme = () => {
+    const currentOnScreen = document.documentElement.getAttribute('data-theme');
+    const nextTheme = currentOnScreen === 'dark' ? 'light' : 'dark';
+    setTheme(nextTheme);
+  };
 
   return { theme, setTheme, toggleTheme };
 }

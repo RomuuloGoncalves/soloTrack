@@ -6,6 +6,7 @@ import Login from './Pages/auth/Login/Login'
 import SignUp from "./Pages/auth/SignIn/SignUp";
 import NotFoundPage from "./Pages/public/NotFoundPage/NotFoundPage";
 import ChatBot from "./Pages/ChatBot/ChatBot";
+import Relatorio from "./Pages/Relatorio/Relatorio";
 
 import { useTheme } from "./hooks/useTheme";
 import { ToastProvider } from "./contexts/ToastContext";
@@ -21,6 +22,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/chatbot" element={<ChatBot />} />
+          <Route path="/relatorio" element={<Relatorio />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Router>

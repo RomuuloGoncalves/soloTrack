@@ -18,7 +18,9 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         <button className={styles.closeBtn} onClick={onClose}>
           <X size={22} />
         </button>
+        
         <h1 className={styles.title}>Configurações</h1>
+
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Geral</h2>
           <div className={styles.card}>
@@ -30,12 +32,14 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               >
                 <Sun size={18} /> Claro
               </button>
+
               <button 
                 className={`${styles.themeBtn} ${theme === 'system' ? styles.active : ''}`}
                 onClick={() => setTheme('system')}
               >
                 <Monitor size={18} /> Sistema
               </button>
+
               <button 
                 className={`${styles.themeBtn} ${theme === 'dark' ? styles.active : ''}`}
                 onClick={() => setTheme('dark')}
@@ -45,6 +49,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
             </div>
           </div>
         </section>
+
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Conta</h2>
           <div className={styles.card}>
@@ -66,6 +71,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
             </div>
           </div>
         </section>
+
         <button className={styles.logoutBtn}>
           <LogOut size={18} /> Sair
         </button>
