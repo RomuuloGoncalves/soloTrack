@@ -40,7 +40,8 @@
 .mainContent {
   flex: 1;
   padding: 40px;
-  overflow-x: hidden;
+  margin-left: 260px; 
+  width: calc(100% - 260px);
 }
 
 .header {
@@ -274,9 +275,12 @@
     flex-direction: column;
   }
 
-  .mainContent {
-    padding: 20px;
+.mainContent {
+    margin-left: 0;
+    width: 100%;
+    padding: 80px 20px 20px;
   }
+
 
   .header {
     flex-direction: column;
