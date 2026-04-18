@@ -10,21 +10,37 @@ import Relatorio from "./Pages/Relatorio/Relatorio";
 
 import { useTheme } from "./hooks/useTheme";
 import { ToastProvider } from "./contexts/ToastContext";
+import { ProvedorAuth } from "./contexts/ContextoAuth";
+import { RotaPrivada } from "./components/RotaPrivada/RotaPrivada";
+import { RotaPublica } from "./components/RotaPublica/RotaPublica";
 
 function App() {
-  useTheme(); // Inicializa o tema e gerencia o data-theme
+  useTheme();
 
   return (
     <ToastProvider>
       <Router>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/chatbot" element={<ChatBot />} />
-          <Route path="/relatorio" element={<Relatorio />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
+        <ProvedorAuth>
+          <Routes>
+            <Route path="/" element={<Home />} />
+
+            <Route path="/login" element={
+              <RotaPublica><Login /></RotaPublica>
+            } />
+            <Route path="/signup" element={
+              <RotaPublica><SignUp /></RotaPublica>
+            } />
+
+            <Route path="/chatbot" element={
+              <RotaPrivada><ChatBot /></RotaPrivada>
+            } />
+            <Route path="/relatorio" element={
+              <RotaPrivada><Relatorio /></RotaPrivada>
+            } />
+
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </ProvedorAuth>
       </Router>
     </ToastProvider>
   );

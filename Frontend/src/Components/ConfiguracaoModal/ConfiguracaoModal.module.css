@@ -160,7 +160,26 @@
   border: 1px solid var(--modal-input-border);
   color: var(--modal-input-text);
   border-radius: 10px;
-  outline: none
+  outline: none;
+  box-sizing: border-box
+}
+
+.inputGroup input:disabled {
+  opacity: 0.4;
+  cursor: not-allowed
+}
+
+.erroMsg {
+  display: block;
+  font-size: 12px;
+  color: #D20012;
+  margin-top: 4px
+}
+
+.opcional {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--modal-section-title)
 }
 
 .actionButtons {

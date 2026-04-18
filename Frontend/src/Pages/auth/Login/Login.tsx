@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
 import style from './Login.module.css';
 import usuarioService from '../../../services/usuarioService';
 import { useToast } from '../../../contexts/ToastContext';
+import { useAutenticacao } from '../../../contexts/ContextoAuth';
 
 function Login() {
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const { entrar } = useAutenticacao();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -27,8 +28,9 @@ function Login() {
       const response = await usuarioService.login({ email, password });
       const { access_token, usuario, message } = response.data;
 
-      Cookies.set('token', access_token, { expires: 7, path: '/' });
-      localStorage.setItem('user', JSON.stringify(usuario));
+      if (!usuario) throw new Error('Dados do usuário não retornados pelo servidor.');
+
+      entrar(access_token, usuario);
 
       showToast(message || 'Login realizado com sucesso!', 'success');
       navigate('/');
