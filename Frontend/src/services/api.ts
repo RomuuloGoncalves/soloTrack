@@ -30,7 +30,11 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       Cookies.remove('token');
       localStorage.removeItem('usuario');
-      window.location.hash = '#/login';
+      const rotasPublicas = ['/', '/login', '/signup'];
+      const rotaAtual = window.location.hash.replace('#', '') || '/';
+      if (!rotasPublicas.includes(rotaAtual)) {
+        window.location.hash = '#/login';
+      }
     }
     return Promise.reject(error);
   }
