@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Propriedade;
-use Illuminate\Http\Request;
+use App\Http\Requests\StorePropriedadeRequest;
+use App\Http\Requests\UpdatePropriedadeRequest;
 
 class PropriedadeController extends Controller
 {
@@ -58,12 +59,16 @@ class PropriedadeController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $propriedade = Propriedade::find($id);
+        if (!$propriedade) {
+            return $this->error("Propriedade não encontrada", 404);
+        }
+
+        $propriedade->update($request->validated());
+
+        return $this->success($propriedade, 'Propriedade atualizada');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         $propriedade = Propriedade::find($id);

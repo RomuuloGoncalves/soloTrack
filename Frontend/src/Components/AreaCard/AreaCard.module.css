@@ -54,14 +54,36 @@
   margin: 4px 0 0; 
 }
 
+.cardTopActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .mapIconCircle {
-  background: var(--map-circle-bg); 
+  background: var(--map-circle-bg);
   width: 40px;
   height: 40px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.deleteBtn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 6px;
+  border-radius: 6px;
+  transition: color 0.2s;
+}
+
+.deleteBtn:hover {
+  color: #e53e3e;
 }
 
 .cardDivider {
