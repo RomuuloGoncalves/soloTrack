@@ -4,94 +4,95 @@ namespace App\Http\Controllers;
 
 use App\Services\GeminiService;
 use App\Mcp\Tools\ListarUsuariosTool;
+use App\Mcp\Tools\ListarPropriedadesTool;
+use App\Mcp\Tools\CriarPropriedadeTool;
+use App\Mcp\Tools\CriarAreaPlantioTool;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class ChatController extends Controller
 {
     protected GeminiService $gemini;
+
+    protected array $toolMap = [
+        'listar_usuarios'    => ListarUsuariosTool::class,
+        'listar_propriedades' => ListarPropriedadesTool::class,
+        'criar_propriedade'  => CriarPropriedadeTool::class,
+        'criar_area_plantio' => CriarAreaPlantioTool::class,
+    ];
 
     public function __construct(GeminiService $gemini)
     {
         $this->gemini = $gemini;
     }
 
-    /**
-     * Endpoint principal para conversa com a IA e análise de dados (MCP).
-     */
     public function chat(Request $request)
     {
         $request->validate([
             'messages' => 'required|array',
         ]);
 
-        $userMessages = $request->input('messages');
-        
-        // Define as ferramentas MCP disponíveis
-        $tools = [
-            ListarUsuariosTool::definition()
-        ];
+        $tools = array_map(
+            fn($class) => $class::definition(),
+            $this->toolMap
+        );
+
+        $currentMessages = $request->input('messages');
+        $maxIterations = 5;
 
         try {
-            // 1. Enviar mensagem para o Gemini com as ferramentas
-            $response = $this->gemini->chat($userMessages, $tools);
+            for ($i = 0; $i < $maxIterations; $i++) {
+                $response = $this->gemini->chat($currentMessages, array_values($tools));
 
-            // 2. Verificar se o Gemini retornou candidatos
-            if (empty($response['candidates'])) {
-                $finishReason = $response['promptFeedback']['blockReason'] ?? 'Desconhecido';
-                throw new \Exception("A IA não gerou uma resposta válida. Motivo: $finishReason");
-            }
+                if (empty($response['candidates'])) {
+                    $reason = $response['promptFeedback']['blockReason'] ?? 'Desconhecido';
+                    throw new \Exception("A IA não gerou uma resposta válida. Motivo: $reason");
+                }
 
-            $candidate = $response['candidates'][0]['content'] ?? null;
-            $parts = $candidate['parts'] ?? [];
+                $candidate = $response['candidates'][0]['content'] ?? null;
+                $parts = $candidate['parts'] ?? [];
 
-            foreach ($parts as $part) {
-                if (isset($part['functionCall'])) {
-                    $functionName = $part['functionCall']['name'];
-                    
-                    // Executar a ferramenta correspondente
-                    if ($functionName === 'listar_usuarios') {
-                        $toolResult = ListarUsuariosTool::execute();
+                $functionCalls = array_filter($parts, fn($p) => isset($p['functionCall']));
 
-                        // 3. Usar o conteúdo original da IA para o histórico, corrigindo apenas o formato dos args
-                        $aiModelMessage = $candidate;
-                        foreach ($aiModelMessage['parts'] as &$tempPart) {
-                            if (isset($tempPart['functionCall'])) {
-                                $tempPart['functionCall']['args'] = !empty($tempPart['functionCall']['args']) 
-                                    ? $tempPart['functionCall']['args'] 
-                                    : new \stdClass();
-                            }
-                        }
+                if (empty($functionCalls)) {
+                    return response()->json($response);
+                }
 
-                        $toolResponseMessage = [
-                            'role' => 'function',
-                            'parts' => [
-                                [
-                                    'functionResponse' => [
-                                        'name' => $functionName,
-                                        'response' => ['content' => $toolResult]
-                                    ]
-                                ]
-                            ]
-                        ];
-
-                        $allMessages = $userMessages;
-                        $allMessages[] = $aiModelMessage;
-                        $allMessages[] = $toolResponseMessage;
-
-                        $finalResponse = $this->gemini->chat($allMessages, $tools);
-                        return response()->json($finalResponse);
+                // Normaliza args para objeto JSON antes de adicionar ao histórico
+                $aiModelMessage = $candidate;
+                foreach ($aiModelMessage['parts'] as &$historyPart) {
+                    if (isset($historyPart['functionCall'])) {
+                        $historyPart['functionCall']['args'] = (object)($historyPart['functionCall']['args'] ?? []);
                     }
+                }
+                unset($historyPart); // Quebra a referência para evitar corrupção do histórico
+                $currentMessages[] = $aiModelMessage;
+
+                // Executa cada ferramenta chamada e adiciona o resultado ao histórico
+                foreach ($functionCalls as $callPart) {
+                    $functionName = $callPart['functionCall']['name'];
+                    $args = (array) ($callPart['functionCall']['args'] ?? []);
+
+                    $toolClass = $this->toolMap[$functionName] ?? null;
+                    $toolResult = $toolClass ? $toolClass::execute($args) : ['erro' => "Ferramenta '$functionName' não encontrada."];
+
+                    $currentMessages[] = [
+                        'role' => 'function',
+                        'parts' => [
+                            [
+                                'functionResponse' => [
+                                    'name' => $functionName,
+                                    'response' => ['content' => $toolResult],
+                                ],
+                            ],
+                        ],
+                    ];
                 }
             }
 
-            // Se não houve chamada de ferramenta, apenas retorna a resposta da IA
-            return response()->json($response);
+            throw new \Exception('Limite de iterações de ferramentas atingido.');
 
         } catch (\Exception $e) {
-            return response()->json([
-                'error' => $e->getMessage()
-            ], 500);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 }

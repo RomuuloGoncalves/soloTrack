@@ -3,13 +3,13 @@
 // import serverService from '../../../services/serverService';
 // import style from './Home.module.css';
 
-// function PublicHome() {
+function PublicHome() {
   
-//   return (
-//     <div>
-//       Maria
-//     </div>
-//   );
-// }
+  return (
+    <div>
+      Maria
+    </div>
+  );
+}
 
-// export default PublicHome;//maria passou aqui para testar
+export default PublicHome;//maria passou aqui para testar
