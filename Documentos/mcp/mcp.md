@@ -27,6 +27,11 @@ decide se permite ou nao, busca os dados, e os entrega para a IA formatar e resp
 Isso garante seguranca (a IA nunca ve mais do que deve) e organizacao (cada tipo de dado e uma
 ferramenta separada).
 
+Com a evolucao do sistema, as ferramentas passaram a nao apenas **consultar** dados, mas tambem
+**criar** novos registros. Isso significa que o usuario pode pedir para a IA, em linguagem natural,
+coisas como "Crie uma propriedade chamada Fazenda Norte em Sao Paulo" ou "Adicione uma area de
+plantio chamada Talhao Sul na minha fazenda", e a IA vai executar essas acoes diretamente no banco.
+
 ---
 
 ## 2. Arquitetura do Sistema
@@ -34,10 +39,10 @@ ferramenta separada).
 O sistema e composto por tres camadas:
 
 - **Frontend (React):** A interface onde o usuario digita e le as respostas.
-- **Backend (Laravel):** O servidor que recebe a pergunta, conversas com a IA e executa as
+- **Backend (Laravel):** O servidor que recebe a pergunta, conversa com a IA e executa as
   ferramentas de banco de dados.
 - **API do Google Gemini:** O modelo de IA externo que processa linguagem natural e decide quando
-  e necesario buscar dados do sistema.
+  e necessario buscar ou criar dados no sistema.
 
 ---
 
@@ -194,7 +199,7 @@ if ($response->failed()) {
 - **`Log::error(...)`:** Registra o corpo completo do erro no arquivo de log para facilitar o
   diagnostico.
 - **`throw new \Exception(...)`:** Lanca uma excecao que sera capturada pelo `ChatController`,
-  que ira retorna a mensagem de erro ao frontend.
+  que ira retornar a mensagem de erro ao frontend.
 - **`$response->json('error.message', 'Erro desconhecido')`:** Extrai o campo `error.message` do
   JSON de resposta do Google. O segundo parametro (`'Erro desconhecido'`) e o valor padrao caso
   o campo nao exista.
@@ -252,12 +257,17 @@ public static function definition(): array
   JSON vazia). O Google exige `{}` neste campo — enviar `[]` causa erro de validacao.
 
 ```php
-public static function execute()
+public static function execute(array $args = [])
 {
     return Usuario::all()->toArray();
 }
 ```
 
+- **`array $args = []`:** Parametro opcional adicionado para manter a assinatura consistente com
+  todas as demais ferramentas do sistema. Ferramentas de consulta sem parametros ignoram o `$args`,
+  mas ferramentas de criacao (como `CriarPropriedadeTool`) precisam receber os dados informados
+  pelo usuario. Ter a mesma assinatura permite que o `ChatController` chame todas as ferramentas
+  de forma uniforme, sem precisar saber quais aceitam ou nao argumentos.
 - **`Usuario::all()`:** Chama o Model Eloquent para buscar todos os registros da tabela `usuarios`
   no banco de dados. Retorna uma Collection do Laravel.
 - **`->toArray()`:** Converte a Collection Eloquent em um array PHP simples. Isso e necessario
@@ -266,148 +276,447 @@ public static function execute()
 
 ---
 
-### 3.5. app/Http/Controllers/ChatController.php
+### 3.5. app/Mcp/Tools/ListarPropriedadesTool.php
+
+**Motivo da criacao:** Para que a IA possa criar uma area de plantio, ela precisa primeiro saber
+qual e o `id` da propriedade onde a area sera criada. Como a IA nao conhece os IDs do banco de
+dados, ela precisa de uma ferramenta que retorne a lista de propriedades com seus identificadores.
+Alem disso, usuarios podem perguntar sobre suas fazendas diretamente no chat.
+
+**Codigo completo e explicado:**
+
+```php
+namespace App\Mcp\Tools;
+
+use App\Models\Propriedade;
+```
+
+- **`use App\Models\Propriedade`:** Importa o Model Eloquent `Propriedade`, que representa a tabela
+  `propriedades` no banco de dados.
+
+```php
+public static function definition(): array
+{
+    return [
+        'name' => 'listar_propriedades',
+        'description' => 'Retorna a lista de todas as propriedades cadastradas no sistema SoloTrack, incluindo seus IDs, nomes, cidade, estado e tamanho em hectares.',
+        'parameters' => [
+            'type' => 'object',
+            'properties' => (object) [],
+        ],
+    ];
+}
+```
+
+- **`'name' => 'listar_propriedades'`:** Nome pelo qual a IA identifica e solicita esta ferramenta.
+- **`'description'`:** Menciona explicitamente que o retorno inclui os **IDs**. Isso e intencional:
+  a IA le a descricao para saber que, apos chamar esta ferramenta, ela tera o `id` necessario para
+  criar uma area de plantio vinculada a propriedade correta.
+
+```php
+public static function execute(array $args = [])
+{
+    return Propriedade::all(['id', 'nome', 'cidade', 'estado', 'tamanho_hectares'])->toArray();
+}
+```
+
+- **`Propriedade::all([...])`:** Busca todos os registros da tabela `propriedades`, mas seleciona
+  apenas as colunas especificadas no array. Retornar somente os campos necessarios reduz o tamanho
+  do payload enviado de volta a API do Google, economizando tokens.
+- **Colunas selecionadas:** `id` (necessario para criar areas), `nome` (para o usuario identificar
+  a propriedade), `cidade`, `estado` e `tamanho_hectares` (informacoes relevantes para o contexto
+  da conversa).
+
+---
+
+### 3.6. app/Mcp/Tools/CriarPropriedadeTool.php
+
+**Motivo da criacao:** Permite que o usuario crie uma nova propriedade rural diretamente pelo chat,
+sem precisar navegar ate a tela de gestao. A IA coleta os dados em linguagem natural (ex: "Crie
+uma fazenda chamada Boa Vista em Ribeirao Preto, SP, com 200 hectares"), extrai os campos e chama
+esta ferramenta com os valores estruturados.
+
+**Codigo completo e explicado:**
+
+```php
+namespace App\Mcp\Tools;
+
+use App\Models\Propriedade;
+use Illuminate\Support\Facades\Validator;
+```
+
+- **`use App\Models\Propriedade`:** Importa o Model para criar o registro no banco.
+- **`use Illuminate\Support\Facades\Validator`:** Importa o sistema de validacao do Laravel.
+  A validacao e necessaria porque os dados vem da IA (que pode interpretar erroneamente o que o
+  usuario disse) e precisam ser verificados antes de serem gravados no banco.
+
+```php
+public static function definition(): array
+{
+    return [
+        'name' => 'criar_propriedade',
+        'description' => 'Cria uma nova propriedade rural no sistema SoloTrack. Use esta ferramenta quando o usuário pedir para cadastrar ou criar uma fazenda/propriedade.',
+        'parameters' => [
+            'type' => 'object',
+            'properties' => [
+                'nome' => [
+                    'type' => 'string',
+                    'description' => 'Nome da propriedade (obrigatório)',
+                ],
+                'cidade' => [
+                    'type' => 'string',
+                    'description' => 'Cidade onde a propriedade está localizada',
+                ],
+                'estado' => [
+                    'type' => 'string',
+                    'description' => 'Estado com sigla de 2 letras (ex: SP, MG, PR)',
+                ],
+                'latitude' => [
+                    'type' => 'number',
+                    'description' => 'Latitude geográfica (valor entre -90 e 90)',
+                ],
+                'longitude' => [
+                    'type' => 'number',
+                    'description' => 'Longitude geográfica (valor entre -180 e 180)',
+                ],
+                'tamanho_hectares' => [
+                    'type' => 'number',
+                    'description' => 'Tamanho total da propriedade em hectares',
+                ],
+            ],
+            'required' => ['nome'],
+        ],
+    ];
+}
+```
+
+- **`'properties'`:** Diferente das ferramentas de consulta, esta ferramenta declara cada campo
+  que a IA deve preencher. O Google Gemini usa essas declaracoes para saber quais informacoes
+  extrair da mensagem do usuario antes de chamar a ferramenta.
+- **Cada propriedade** possui `type` (o tipo de dado esperado) e `description` (instrucao para a
+  IA sobre o que aquele campo significa). A IA le essas descricoes para mapear corretamente o que
+  o usuario disse para os campos certos.
+- **`'required' => ['nome']`:** Lista os campos obrigatorios. Se o usuario nao informar o nome
+  da propriedade, a IA deve solicitar essa informacao antes de chamar a ferramenta, em vez de
+  tentar criar um registro incompleto.
+
+```php
+public static function execute(array $args = [])
+{
+    $validator = Validator::make($args, [
+        'nome'             => 'required|string|max:255',
+        'cidade'           => 'nullable|string|max:255',
+        'estado'           => 'nullable|string|size:2',
+        'latitude'         => 'nullable|numeric|between:-90,90',
+        'longitude'        => 'nullable|numeric|between:-180,180',
+        'tamanho_hectares' => 'nullable|numeric|min:0',
+    ]);
+
+    if ($validator->fails()) {
+        return [
+            'sucesso' => false,
+            'erros' => $validator->errors()->toArray(),
+        ];
+    }
+
+    $propriedade = Propriedade::create($validator->validated());
+
+    return [
+        'sucesso' => true,
+        'mensagem' => "Propriedade '{$propriedade->nome}' criada com sucesso!",
+        'propriedade' => $propriedade->toArray(),
+    ];
+}
+```
+
+- **`$args`:** Contem os campos extraidos pela IA da mensagem do usuario (ex:
+  `['nome' => 'Fazenda Boa Vista', 'cidade' => 'Ribeirao Preto', 'estado' => 'SP']`).
+- **`Validator::make($args, [...])`:** Valida os dados recebidos da IA com as mesmas regras
+  definidas no `StorePropriedadeRequest`. Isso garante consistencia: dados criados pelo chat
+  passam pelas mesmas validacoes que dados criados pelo formulario da tela de gestao.
+- **`if ($validator->fails())`:** Se a validacao falhar (ex: estado com mais de 2 letras), o
+  metodo retorna um array de erros em vez de um registro invalido. A IA recebe esse array, le
+  os erros e informa o usuario sobre o que esta incorreto, possibilitando a correcao.
+- **`$validator->validated()`:** Retorna apenas os campos que passaram na validacao, descartando
+  qualquer campo extra que a IA possa ter incluido incorretamente.
+- **`Propriedade::create(...)`:** Insere o novo registro na tabela `propriedades` do banco de dados
+  usando o Model Eloquent.
+- **Retorno estruturado:** O retorno inclui `sucesso`, uma `mensagem` legivel e os dados do
+  registro criado (`propriedade`). A IA usa esses dados para confirmar ao usuario o que foi
+  criado, incluindo o `id` gerado automaticamente pelo banco.
+
+---
+
+### 3.7. app/Mcp/Tools/CriarAreaPlantioTool.php
+
+**Motivo da criacao:** Permite que o usuario crie uma nova area de plantio dentro de uma
+propriedade existente, diretamente pelo chat. Como a area precisa estar vinculada a uma
+propriedade, o fluxo tipico envolve dois passos automaticos: a IA primeiro chama
+`listar_propriedades` para descobrir o `id` da propriedade correta, e depois chama
+`criar_area_plantio` com esse `id`. Esse encadeamento de ferramentas e gerenciado
+automaticamente pelo `ChatController`.
+
+**Codigo completo e explicado:**
+
+```php
+namespace App\Mcp\Tools;
+
+use App\Models\AreaPlantio;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+```
+
+- **`use App\Models\AreaPlantio`:** Importa o Model para criar o registro no banco.
+- **`use Illuminate\Support\Str`:** Importa a classe de utilitarios de string do Laravel.
+  Necessaria para gerar o `qr_code_hash` com `Str::uuid()`.
+
+```php
+public static function definition(): array
+{
+    return [
+        'name' => 'criar_area_plantio',
+        'description' => 'Cria uma nova área de plantio vinculada a uma propriedade existente no sistema SoloTrack. Use listar_propriedades antes para obter o ID da propriedade correta caso não saiba.',
+        'parameters' => [
+            'type' => 'object',
+            'properties' => [
+                'propriedade_id' => [
+                    'type' => 'integer',
+                    'description' => 'ID da propriedade onde a área será criada (obrigatório)',
+                ],
+                'nome_area' => [
+                    'type' => 'string',
+                    'description' => 'Nome da área de plantio (obrigatório)',
+                ],
+                'tamanho_area_m2' => [
+                    'type' => 'number',
+                    'description' => 'Tamanho da área em metros quadrados',
+                ],
+                'latitude' => [
+                    'type' => 'number',
+                    'description' => 'Latitude geográfica (valor entre -90 e 90)',
+                ],
+                'longitude' => [
+                    'type' => 'number',
+                    'description' => 'Longitude geográfica (valor entre -180 e 180)',
+                ],
+            ],
+            'required' => ['propriedade_id', 'nome_area'],
+        ],
+    ];
+}
+```
+
+- **`'description'`:** Instrui explicitamente a IA a chamar `listar_propriedades` antes caso ela
+  nao saiba o `id`. Isso e necessario porque a IA nao tem acesso direto ao banco — ela precisa
+  consultar antes de agir.
+- **`'propriedade_id'`:** Campo do tipo `integer`. O Google Gemini vai garantir que este campo
+  seja um numero inteiro ao preenchê-lo, o que e importante para que a validacao e a busca no
+  banco funcionem corretamente.
+- **`'required' => ['propriedade_id', 'nome_area']`:** Ambos sao obrigatorios. Sem o
+  `propriedade_id`, nao e possivel criar a area (a chave estrangeira seria violada). Sem o
+  `nome_area`, o registro nao teria identificacao.
+
+```php
+public static function execute(array $args = [])
+{
+    $validator = Validator::make($args, [
+        'propriedade_id'  => 'required|integer|exists:propriedades,id',
+        'nome_area'       => 'required|string|max:255',
+        'tamanho_area_m2' => 'nullable|numeric|min:0',
+        'latitude'        => 'nullable|numeric|between:-90,90',
+        'longitude'       => 'nullable|numeric|between:-180,180',
+    ]);
+
+    if ($validator->fails()) {
+        return [
+            'sucesso' => false,
+            'erros' => $validator->errors()->toArray(),
+        ];
+    }
+
+    $dados = $validator->validated();
+    $dados['qr_code_hash'] = Str::uuid()->toString();
+
+    $area = AreaPlantio::create($dados);
+
+    return [
+        'sucesso' => true,
+        'mensagem' => "Área de plantio '{$area->nome_area}' criada com sucesso!",
+        'area' => $area->toArray(),
+    ];
+}
+```
+
+- **`'exists:propriedades,id'`:** Regra de validacao que consulta o banco para verificar se
+  existe uma linha na tabela `propriedades` com aquele `id`. Isso evita criar uma area orfã
+  (sem propriedade valida) caso a IA tenha passado um `id` incorreto.
+- **`$dados['qr_code_hash'] = Str::uuid()->toString()`:** Gera um UUID v4 unico (ex:
+  `"550e8400-e29b-41d4-a716-446655440000"`) e o adiciona aos dados antes da insercao. O
+  `qr_code_hash` e obrigatorio pela estrutura da tabela mas nao deve ser informado pelo usuario
+  — por isso ele e gerado automaticamente aqui, da mesma forma que o `AreaPlantioController`
+  faz ao criar via formulario.
+- **`AreaPlantio::create($dados)`:** Insere o registro na tabela `area_plantios` com todos os
+  campos validados mais o `qr_code_hash` gerado.
+- **Retorno:** Assim como em `CriarPropriedadeTool`, o retorno inclui os dados do registro
+  criado com seu `id`, permitindo que a IA confirme ao usuario os detalhes da area criada.
+
+---
+
+### 3.8. app/Http/Controllers/ChatController.php
 
 **Motivo da criacao:** E o orquestrador central do protocolo MCP. Ele e necessario porque o fluxo
-de comunicacao com a IA envolve multiplos passos: enviar a pergunta, verificar se a IA quer dados,
-buscar os dados, e enviar a resposta final. Nenhum outro componente do sistema seria responsavel
+de comunicacao com a IA envolve multiplos passos: enviar a pergunta, verificar se a IA quer dados
+ou quer criar algo, executar a ferramenta, e continuar o ciclo ate a IA ter todas as informacoes
+necessarias para formular a resposta final. Nenhum outro componente do sistema seria responsavel
 por coordenar todas essas etapas.
 
 **Codigo completo e explicado:**
 
 ```php
-protected GeminiService $gemini;
-
-public function __construct(GeminiService $gemini)
-{
-    $this->gemini = $gemini;
-}
+use App\Mcp\Tools\ListarUsuariosTool;
+use App\Mcp\Tools\ListarPropriedadesTool;
+use App\Mcp\Tools\CriarPropriedadeTool;
+use App\Mcp\Tools\CriarAreaPlantioTool;
 ```
 
-- **Injecao de Dependencia:** O Laravel injeta automaticamente uma instancia de `GeminiService`
-  no construtor. Isso significa que o `ChatController` nao precisa criar o servico manualmente
-  com `new GeminiService()`. O Laravel instancia e gerencia o ciclo de vida do servico.
-- **`$this->gemini`:** Armazena a instancia do servico para uso nos metodos da classe.
+- Cada ferramenta disponivel no sistema e importada aqui. Para adicionar uma nova ferramenta ao
+  chat, basta importar sua classe nesta secao e registra-la no `$toolMap` (explicado a seguir).
 
 ```php
-public function chat(Request $request)
-{
-    $request->validate([
-        'messages' => 'required|array',
-    ]);
-```
-
-- **`validate`:** Garante que o frontend enviou o campo `messages` e que ele e um array. Se a
-  validacao falhar, o Laravel automaticamente retorna um erro `422` para o frontend sem executar
-  o resto do codigo.
-
-```php
-$userMessages = $request->input('messages');
-```
-
-- **`$request->input('messages')`:** Extrai o valor do campo `messages` do corpo da requisicao
-  JSON enviada pelo frontend.
-
-```php
-$tools = [
-    ListarUsuariosTool::definition()
+protected array $toolMap = [
+    'listar_usuarios'     => ListarUsuariosTool::class,
+    'listar_propriedades' => ListarPropriedadesTool::class,
+    'criar_propriedade'   => CriarPropriedadeTool::class,
+    'criar_area_plantio'  => CriarAreaPlantioTool::class,
 ];
 ```
 
-- **`$tools`:** Array com todas as ferramentas que a IA pode usar nesta sessao. Cada ferramenta
-  e representada pelo retorno do seu metodo `definition()`. Para adicionar uma nova ferramenta
-  ao sistema, basta adicionar uma nova linha aqui.
+- **`$toolMap`:** E um mapa que associa o **nome da ferramenta** (como a IA a conhece) a
+  **classe PHP** responsavel por executa-la. Antes, o controlador usava `if/else` para cada
+  ferramenta — o que significava que adicionar uma nova ferramenta exigia editar a logica do
+  `if/else`. Com o `$toolMap`, adicionar uma ferramenta e apenas incluir uma nova linha neste
+  array. O restante do codigo funciona automaticamente para qualquer ferramenta registrada.
+- **A chave do array** (ex: `'criar_area_plantio'`) deve ser identica ao campo `'name'` definido
+  no metodo `definition()` da ferramenta correspondente. E por este nome que a IA solicita a
+  execucao da ferramenta.
+- **`::class`:** E a forma do PHP de referenciar uma classe sem instancia-la. Retorna a string
+  com o nome completo da classe, ex: `'App\Mcp\Tools\CriarPropriedadeTool'`.
 
 ```php
-$response = $this->gemini->chat($userMessages, $tools);
+$tools = array_map(
+    fn($class) => $class::definition(),
+    $this->toolMap
+);
 ```
 
-- **Primeira Chamada a IA:** Envia o historico de mensagens e a lista de ferramentas para o
-  Gemini. O modelo analisa a pergunta e decide o que fazer: responder diretamente ou pedir
-  dados atraves de uma ferramenta.
+- **`array_map`:** Percorre o `$toolMap` e chama `definition()` em cada classe, gerando
+  automaticamente o array de definicoes de ferramentas que sera enviado ao Google Gemini. Isso
+  elimina a necessidade de manter uma lista separada de definicoes — ao registrar uma ferramenta
+  no `$toolMap`, ela automaticamente e incluida nas instrucoes enviadas a IA.
 
 ```php
-if (empty($response['candidates'])) {
-    $finishReason = $response['promptFeedback']['blockReason'] ?? 'Desconhecido';
-    throw new \Exception("A IA não gerou uma resposta válida. Motivo: $finishReason");
-}
+$currentMessages = $request->input('messages');
+$maxIterations = 5;
 ```
 
-- **`$response['candidates']`:** O Google retorna as respostas possiveis dentro de um array
-  chamado `candidates`. Em situacoes normais, sempre existe pelo menos um candidato.
-- **Verificacao de Bloqueio:** Se o array `candidates` vier vazio, significa que o Google bloqueou
-  a resposta (por filtros de conteudo ou por excesso de cota). O sistema tenta ler o motivo do
-  bloqueio em `promptFeedback.blockReason` e lanca uma excecao com essa informacao.
+- **`$currentMessages`:** Começa com o historico enviado pelo frontend e vai sendo expandido a
+  cada iteracao do loop conforme a IA chama ferramentas e recebe resultados.
+- **`$maxIterations = 5`:** Limite de segurança para evitar loops infinitos. Em situacoes
+  normais, o fluxo e concluido em 2 ou 3 iteracoes. O limite de 5 garante que, mesmo em casos
+  inesperados, o servidor nao fique preso em um ciclo eterno de chamadas a API do Google.
 
 ```php
-$candidate = $response['candidates'][0]['content'] ?? null;
-$parts = $candidate['parts'] ?? [];
+for ($i = 0; $i < $maxIterations; $i++) {
+    $response = $this->gemini->chat($currentMessages, array_values($tools));
 ```
 
-- **`$response['candidates'][0]`:** Acessa o primeiro (e geralmente unico) candidato de resposta.
-- **`['content']`:** Cada candidato possui um campo `content` que contem o `role` (quem gerou
-  a resposta) e os `parts` (o conteudo em si). O operador `??` significa que se o campo nao
-  existir, o valor sera `null`.
-- **`$parts`:** Array com as "partes" do conteudo gerado. A IA pode gerar multiplas partes em
-  uma unica resposta: um texto, um pensamento, uma chamada de funcao, etc.
+- **Loop principal:** A novidade central do controlador. Em vez de fazer apenas uma ou duas
+  chamadas fixas ao Gemini, o controlador entra em um loop que repete enquanto a IA continuar
+  solicitando ferramentas. Isso permite fluxos com multiplos passos, como: (1) a IA lista as
+  propriedades para descobrir o ID, (2) a IA cria a area com o ID encontrado, (3) a IA formula
+  a resposta final — tudo automaticamente em uma unica mensagem do usuario.
+- **`array_values($tools)`:** Garante que o array de definicoes seja enviado como uma lista
+  indexada (`[0, 1, 2, ...]`), que e o formato esperado pelo Google. Sem isso, o PHP poderia
+  enviar um objeto com chaves string (`{'listar_usuarios': {...}, ...}`), que o Google recusaria.
 
 ```php
-foreach ($parts as $part) {
-    if (isset($part['functionCall'])) {
-        $functionName = $part['functionCall']['name'];
-```
+    $functionCalls = array_filter($parts, fn($p) => isset($p['functionCall']));
 
-- **`foreach`:** Percorre cada parte da resposta da IA em busca de uma solicitacao de ferramenta.
-- **`isset($part['functionCall'])`:** Verifica se aquela parte especifica contem uma solicitacao
-  de chamada de função. Se a IA decidiu que precisa de dados, ela insere um `functionCall` em uma
-  das partes da resposta.
-- **`$functionName`:** Extrai o nome da ferramenta que a IA quer usar (ex: `'listar_usuarios'`).
-
-```php
-if ($functionName === 'listar_usuarios') {
-    $toolResult = ListarUsuariosTool::execute();
-```
-
-- **Despacho da Ferramenta:** Compara o nome solicitado pela IA com os nomes das ferramentas
-  disponiveis. Se coincidir, executa o metodo `execute()` da ferramenta correspondente, que faz
-  a consulta real no banco de dados.
-
-```php
-$aiModelMessage = $candidate;
-foreach ($aiModelMessage['parts'] as &$tempPart) {
-    if (isset($tempPart['functionCall'])) {
-        $tempPart['functionCall']['args'] = !empty($tempPart['functionCall']['args'])
-            ? $tempPart['functionCall']['args']
-            : new \stdClass();
+    if (empty($functionCalls)) {
+        return response()->json($response);
     }
-}
+```
+
+- **`array_filter`:** Filtra as partes da resposta da IA, mantendo apenas aquelas que contem um
+  `functionCall`. Se nenhuma parte conter um `functionCall`, significa que a IA terminou seu
+  raciocinio e gerou uma resposta em texto puro. Nesse caso, o loop e encerrado e a resposta
+  final e retornada ao frontend.
+
+```php
+    $aiModelMessage = $candidate;
+    foreach ($aiModelMessage['parts'] as &$historyPart) {
+        if (isset($historyPart['functionCall'])) {
+            $historyPart['functionCall']['args'] = (object)($historyPart['functionCall']['args'] ?? []);
+        }
+    }
+    unset($historyPart);
+    $currentMessages[] = $aiModelMessage;
 ```
 
 - **Preservacao do Contexto Original:** O controlador reutiliza a mensagem original da IA
   (`$candidate`) em vez de reconstrui-la do zero. Isso e fundamental porque o Gemini 3.1 inclui
   um campo `thought` (com o raciocinio interno da IA) e uma `thought_signature` (uma assinatura
-  criptografica desse raciocinio). Se esses campos forem omitidos ao reenvivar, o Google recusa
+  criptografica desse raciocinio). Se esses campos forem omitidos ao reenviar, o Google recusa
   a requisicao com erro de seguranca.
-- **`&$tempPart`:** O `&` (passagem por referencia) garante que as modificacoes feitas em
-  `$tempPart` dentro do foreach sejam refletidas no array original `$aiModelMessage`.
-- **`new \stdClass()`:** O PHP representa objetos como `stdClass`. Quando o campo `args` da
-  funcao e vazio, o PHP o serializa como `[]` (lista) em JSON. A API do Google exige que argumentos
-  vazios sejam `{}` (objeto). `new \stdClass()` forcca o PHP a gerar `{}` no JSON.
+- **`&$historyPart`:** O `&` (passagem por referencia) garante que as modificacoes feitas dentro
+  do `foreach` sejam refletidas no array original `$aiModelMessage`. Sem o `&`, estaremos
+  modificando uma copia temporaria que e descartada ao final de cada iteracao.
+- **`(object)($historyPart['functionCall']['args'] ?? [])`:** Garante que o campo `args` seja
+  sempre um objeto JSON (`{}`), nunca uma lista (`[]`). O cast `(object)` converte tanto arrays
+  vazios quanto arrays associativos em `stdClass`, que o PHP serializa como objeto JSON. Isso e
+  obrigatorio: a API do Google define `args` como um campo do tipo mapa (objeto), e enviar uma
+  lista causa erro de validacao com a mensagem `"Proto field is not repeating, cannot start list"`.
+- **`unset($historyPart)`:** Esta linha e critica. Em PHP, quando um `foreach` usa passagem por
+  referencia (`&`), a variavel do loop continua existindo como referencia ao ultimo elemento
+  do array apos o termino do `foreach`. Se essa variavel for reutilizada em um `foreach`
+  subsequente (mesmo sem `&`), o PHP escrevera atraves da referencia, corrompendo o ultimo
+  elemento de `$aiModelMessage['parts']` com um valor errado. O `unset` quebra essa referencia
+  imediatamente, tornando `$historyPart` uma variavel inexistente e eliminando o risco.
 
 ```php
-$toolResponseMessage = [
-    'role' => 'function',
-    'parts' => [
-        [
-            'functionResponse' => [
-                'name' => $functionName,
-                'response' => ['content' => $toolResult]
-            ]
-        ]
-    ]
-];
+    foreach ($functionCalls as $callPart) {
+        $functionName = $callPart['functionCall']['name'];
+        $args = (array) ($callPart['functionCall']['args'] ?? []);
+
+        $toolClass = $this->toolMap[$functionName] ?? null;
+        $toolResult = $toolClass ? $toolClass::execute($args) : ['erro' => "Ferramenta '$functionName' não encontrada."];
+
+        $currentMessages[] = [
+            'role' => 'function',
+            'parts' => [[
+                'functionResponse' => [
+                    'name' => $functionName,
+                    'response' => ['content' => $toolResult],
+                ],
+            ]],
+        ];
+    }
 ```
 
+- **`$callPart`:** Nome de variavel diferente de `$historyPart` para deixar claro que este
+  `foreach` opera sobre os dados originais de `$functionCalls` (antes da normalizacao), enquanto
+  o anterior operava sobre `$aiModelMessage` para preparar o historico. O uso de nomes distintos
+  tambem evita qualquer confusao com as referencias do `foreach` anterior.
+- **`$args = (array)(...)`:** Converte os argumentos fornecidos pela IA (que podem ser um array
+  associativo PHP ou um objeto `stdClass`) em um array PHP simples. Esse e o formato que os
+  metodos `execute()` das ferramentas esperam receber.
+- **`$this->toolMap[$functionName] ?? null`:** Busca a classe correspondente ao nome da ferramenta
+  solicitada pela IA. Se o nome nao existir no mapa (o que nao deveria acontecer, mas e tratado
+  por seguranca), retorna `null` e um erro e incluido no resultado.
+- **`$toolClass::execute($args)`:** Chama o metodo estatico `execute()` da ferramenta,
+  passando os argumentos extraidos pela IA. O resultado pode ser uma lista de dados (para
+  ferramentas de consulta) ou um objeto com `sucesso` e os dados criados (para ferramentas
+  de criacao).
 - **`'role' => 'function'`:** Informa ao Google que esta mensagem e a resposta de uma ferramenta,
   nao do usuario nem do modelo de IA.
 - **`'functionResponse'`:** Estrutura obrigatoria para enviar o resultado de uma ferramenta de
@@ -415,55 +724,75 @@ $toolResponseMessage = [
 - **`'name' => $functionName`:** Deve ser exatamente o mesmo nome da funcao que foi solicitada
   pela IA. O Google usa este campo para associar a resposta a solicitacao original.
 - **`'response' => ['content' => $toolResult]`:** O campo `response` encapsula o resultado da
-  ferramenta. O subcampo `content` contem os dados brutos retornados pelo banco de dados.
+  ferramenta. O subcampo `content` contem os dados retornados pela ferramenta (dados do banco
+  ou confirmacao de criacao).
+- **Loop continua:** Apos adicionar todos os resultados ao historico, o `for` executa nova
+  iteracao, chama `GeminiService::chat()` novamente com o historico atualizado, e a IA processa
+  os resultados das ferramentas para decidir o proximo passo.
 
 ```php
-$allMessages = $userMessages;
-$allMessages[] = $aiModelMessage;
-$allMessages[] = $toolResponseMessage;
-
-$finalResponse = $this->gemini->chat($allMessages, $tools);
-return response()->json($finalResponse);
+throw new \Exception('Limite de iterações de ferramentas atingido.');
 ```
 
-- **Segunda Chamada a IA:** O controlador monta o historico completo: as mensagens originais
-  do usuario, a resposta da IA que solicitou a ferramenta, e o resultado da ferramenta. Envia
-  esse historico de volta para o Gemini.
-- **Resposta Final:** Com o historico completo, o Gemini agora tem os dados que precisava. Ele
-  gera uma resposta em linguagem natural (ex: "Existem 3 usuarios: Joao, Maria e Jose") que e
-  retornada ao frontend.
+- Se o loop chegar ao limite de 5 iteracoes sem que a IA produza uma resposta de texto,
+  o controlador lanca uma excecao. Isso protege contra situacoes em que a IA ficasse chamando
+  ferramentas indefinidamente.
 
 ```php
 } catch (\Exception $e) {
-    return response()->json([
-        'error' => $e->getMessage()
-    ], 500);
+    return response()->json(['error' => $e->getMessage()], 500);
 }
 ```
 
-- **Tratamento de Erros:** Qualquer excecao lancada (seja pelo `GeminiService` ou por erros de
-  banco de dados) e capturada aqui. O controlador retorna uma resposta JSON com o campo `error`
-  contendo a mensagem do problema e o codigo HTTP `500` (erro interno do servidor).
+- **Tratamento de Erros:** Qualquer excecao lancada (seja pelo `GeminiService`, por erros de
+  banco de dados, ou pelo limite de iteracoes) e capturada aqui. O controlador retorna uma
+  resposta JSON com o campo `error` contendo a mensagem do problema e o codigo HTTP `500`
+  (erro interno do servidor).
 
 ---
 
 ## 4. Fluxo Completo de uma Mensagem (Passo a Passo)
 
+### Exemplo 1: Consulta simples
+
 1. O usuario digita "Quantos usuarios temos?" no chat e pressiona Enter.
 2. O Frontend envia uma requisicao `POST /api/mcp/chat` com o historico da conversa.
-3. O `ChatController` valida a requisicao e chama `GeminiService::chat()` com as mensagens e
-   as ferramentas disponiveis.
+3. O `ChatController` monta as definicoes de ferramentas a partir do `$toolMap` e chama
+   `GeminiService::chat()`.
 4. O Google Gemini analisa a pergunta, percebe que nao sabe a resposta e retorna um `functionCall`
    para `listar_usuarios`.
-5. O `ChatController` detecta o `functionCall`, chama `ListarUsuariosTool::execute()` e obtem
-   a lista de usuarios do banco de dados.
-6. O controlador preserva o conteudo original da IA (incluindo o `thought` e o `thought_signature`)
-   e adiciona a resposta da ferramenta ao historico.
+5. O `ChatController` detecta o `functionCall`, localiza `ListarUsuariosTool` no `$toolMap`,
+   chama `execute([])` e obtem a lista de usuarios do banco de dados.
+6. O controlador normaliza os `args` para `{}` e adiciona a mensagem da IA e a resposta da
+   ferramenta ao historico.
 7. O controlador faz uma segunda chamada ao Gemini com o historico completo.
-8. O Google Gemini processa os dados recebidos e gera uma resposta em portugues: "O sistema
+8. O Google Gemini nao retorna nenhum `functionCall`. Gera uma resposta em texto: "O sistema
    possui X usuarios cadastrados".
-9. O controlador retorna essa resposta ao Frontend.
+9. O controlador detecta que nao ha mais `functionCall`s, sai do loop e retorna a resposta ao
+   Frontend.
 10. O Frontend exibe a mensagem no chat.
+
+### Exemplo 2: Criacao de area de plantio (fluxo com dois passos)
+
+1. O usuario digita "Crie uma area chamada Talhao Norte de 5000m2 na Fazenda Santa Clara".
+2. O Frontend envia a requisicao `POST /api/mcp/chat`.
+3. O `ChatController` chama o Gemini — **1a iteracao do loop**.
+4. O Gemini percebe que precisa do `id` da "Fazenda Santa Clara" e retorna um `functionCall`
+   para `listar_propriedades`.
+5. O controlador executa `ListarPropriedadesTool::execute([])`, que retorna todas as propriedades
+   com seus IDs. Suponha que a "Fazenda Santa Clara" tenha `id = 3`.
+6. O controlador adiciona a mensagem da IA e o resultado da ferramenta ao historico e retorna
+   ao inicio do loop — **2a iteracao**.
+7. O Gemini recebe a lista de propriedades, identifica que `id = 3` corresponde a "Fazenda
+   Santa Clara" e retorna um `functionCall` para `criar_area_plantio` com os argumentos:
+   `{'propriedade_id': 3, 'nome_area': 'Talhao Norte', 'tamanho_area_m2': 5000}`.
+8. O controlador executa `CriarAreaPlantioTool::execute($args)`, que valida os dados, gera um
+   `qr_code_hash` e insere o registro no banco. Retorna a confirmacao com os dados criados.
+9. O controlador adiciona a mensagem da IA e o resultado ao historico — **3a iteracao**.
+10. O Gemini nao retorna mais `functionCall`s. Gera a resposta final: "A area de plantio
+    'Talhao Norte' foi criada com sucesso na Fazenda Santa Clara!".
+11. O controlador sai do loop e retorna a resposta ao Frontend.
+12. O Frontend exibe a confirmacao no chat.
 
 ---
 
@@ -484,11 +813,19 @@ sendo gratuito.
 
 ## 6. Como Adicionar uma Nova Ferramenta
 
-Para que a IA possa consultar outros dados do sistema (ex: fazendas, colheitas):
+Para que a IA possa executar uma nova acao ou consultar outros dados do sistema:
 
-1. Criar um novo arquivo em `app/Mcp/Tools/`, ex: `ListarPropriedadesTool.php`.
-2. Implementar o metodo `definition()` com o nome e a descricao da nova funcao.
-3. Implementar o metodo `execute()` com a consulta Eloquent correspondente.
-4. Adicionar `ListarPropriedadesTool::definition()` ao array `$tools` no `ChatController`.
+1. Criar um novo arquivo em `app/Mcp/Tools/`, ex: `ListarColheitasTool.php`.
+2. Implementar o metodo `definition()` com o nome, descricao e parametros da ferramenta.
+3. Implementar o metodo `execute(array $args = [])` com a logica de consulta ou criacao.
+4. No `ChatController`, importar a nova classe com `use` e adicionar uma linha no `$toolMap`:
 
-A IA aprendera automaticamente a usar a nova ferramenta nas proximas conversas.
+```php
+protected array $toolMap = [
+    // ... ferramentas existentes ...
+    'listar_colheitas' => ListarColheitasTool::class,
+];
+```
+
+A IA aprendera automaticamente a usar a nova ferramenta nas proximas conversas, sem nenhuma
+outra alteracao necessaria no controlador.

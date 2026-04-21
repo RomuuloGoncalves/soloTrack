@@ -24,7 +24,7 @@ class ListarUsuariosTool
     /**
      * Executa a lógica da ferramenta.
      */
-    public static function execute()
+    public static function execute(array $args = [])
     {
         return Usuario::all()->toArray();
     }
