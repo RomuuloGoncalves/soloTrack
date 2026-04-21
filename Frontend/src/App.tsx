@@ -38,6 +38,9 @@ function App() {
             <Route path="/relatorio" element={
               <RotaPrivada><Relatorio /></RotaPrivada>
             } />
+            <Route path="/gestaopropriedade" element={
+              <RotaPrivada><GestaoPropriedade /></RotaPrivada>
+            } />
 
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
