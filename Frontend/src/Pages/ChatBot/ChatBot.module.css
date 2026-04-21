@@ -343,7 +343,6 @@
 
   .chatbotLayout {
     flex-direction: column;
-    padding: 20px 20px 0;
   }
 
   .chatView {
@@ -370,6 +369,7 @@
   .inputBox {
     height: 60px;
     font-size: 14px;
+    color: var(--text-secondary);
   }
 
   .disclaimer {

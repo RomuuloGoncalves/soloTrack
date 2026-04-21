@@ -1,0 +1,408 @@
+:root {
+  --bg-color: #F5F6FA;
+  --card-bg: #FFFFFF;
+  --text-main: #244C4E;
+  --text-secondary: #666666;
+  --border-color: rgba(0, 0, 0, 0.05);
+  --input-bg: #FAFAFA;
+  --input-border: #EAEAEA;
+  --geo-bg: #F8FAFC;
+}
+
+:global([data-theme="dark"]) {
+  --bg-color: #121417;
+  --card-bg: #1E1F24;
+  --text-main: #FFFFFF;
+  --text-secondary: #A0A0A0;
+  --text-highlight: #58C411;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --input-bg: rgba(255, 255, 255, 0.05);
+  --input-border: rgba(255, 255, 255, 0.1);
+  --geo-bg: rgba(255, 255, 255, 0.02);
+}
+
+.pageLayout {
+  display: flex;
+  background-color: var(--bg-color);
+  min-height: 100dvh;
+}
+
+.mainContent {
+  flex: 1;
+  margin-left: 260px;
+  padding: 40px 20px;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+.header,
+.toolbar,
+.contentCard {
+  width: 100%;
+  max-width: 900px;
+}
+
+.header {
+  margin-bottom: 8px;
+}
+
+.header h1 {
+  font-size: 32px;
+  color: var(--text-highlight);
+  margin-bottom: 8px;
+}
+
+.header p {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.toolbar {
+  display: flex;
+  gap: 30px;
+  margin: 40px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-weight: 500;
+  position: relative;
+}
+
+.tab.active {
+  color: #58C411;
+}
+
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #58C411;
+}
+
+/* Card Form */
+.contentCard {
+  background: var(--card-bg);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.cardHeader {
+  padding: 30px;
+  text-align: center;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.cardHeader h2 {
+  color: var(--text-highlight);
+  font-size: 20px;
+}
+
+.cardHeader p {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.form {
+  padding: 30px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.inputGroup label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-highlight);
+}
+
+.inputGroup input {
+  padding: 12px;
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  background: var(--input-bg);
+  color: var(--text-main);
+  outline: none;
+}
+
+/* Localização */
+.geoSection {
+  background: var(--geo-bg);
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 20px;
+}
+
+.geoHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.geoTitle {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.geoTitle h3 {
+  font-size: 15px;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.geoTitle p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.captureBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--card-bg);
+  border: 1px solid var(--input-border);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #58C411;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 30px;
+}
+
+.saveBtn {
+  background: #58C411;
+  color: #FFF;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.areasContainer {
+  width: 100%;
+  max-width: 1100px;
+}
+
+.areasHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.areasTitle {
+  font-size: 20px;
+  color: var(--text-highlight);
+  font-weight: 600;
+}
+
+.addAreaBtn {
+  background-color: #58C411;
+  color: #FFF;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.areasGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 24px;
+}
+
+.areaInfo h3 {
+  font-size: 16px;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.areaInfo p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 4px 0 0;
+}
+
+.cardDivider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 16px 0;
+}
+
+.cultureLabel {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  font-weight: 600;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.cultureInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-main);
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .pageLayout {
+    display: block;
+    width: 100%;
+    min-height: 100dvh;
+    padding: 0;
+    margin: 0;
+    position: static;
+  }
+
+  .mainContent {
+    margin-left: 0;
+    padding: 100px 20px 40px 20px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+
+  .header,
+  .toolbar,
+  .contentCard,
+  .areasContainer {
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .tab {
+    font-size: 14px;
+  }
+
+  .header {
+    width: 100%;
+    text-align: center;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .toolbar {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 0 0 30px 0;
+    padding: 0;
+  }
+
+  .contentCard {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .form {
+    padding: 20px;
+  }
+
+  .row {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+
+  .geoSection {
+    padding: 15px;
+  }
+
+  .geoHeader {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 15px;
+  }
+
+  .geoTitle {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .captureBtn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .actions {
+    width: 100%;
+  }
+
+  .saveBtn {
+    width: 100%;
+  }
+
+  .areasHeader {
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    text-align: center;
+  }
+
+  .addAreaBtn {
+    width: auto;
+    margin: 0 auto;
+  }
+
+  .areasContainer {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+
+  .areasGrid {
+    width: 100%;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}

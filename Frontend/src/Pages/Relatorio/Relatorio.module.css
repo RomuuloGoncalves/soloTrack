@@ -271,7 +271,6 @@
 @media (max-width: 768px) {
 
   .pageLayout {
-    padding: 20px 20px 0; 
     flex-direction: column;
   }
 

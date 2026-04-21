@@ -1,0 +1,89 @@
+:root {
+  --card-bg: #FFFFFF;
+  --text-main: #244C4E;
+  --text-secondary: #999999;
+  --text-muted: #BBBBBB;
+  --border-color: rgba(0, 0, 0, 0.05);
+  --divider-color: #F5F5F5;
+  --map-circle-bg: #F0F9EB;
+}
+
+:global([data-theme="dark"]) {
+  --card-bg: #1E1F24;
+  --text-main: #FFFFFF;
+  --text-secondary: #A0A0A0;
+  --text-muted: #888888;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --divider-color: rgba(255, 255, 255, 0.05);
+  --map-circle-bg: rgba(88, 196, 17, 0.1); 
+  --text-highlight: #58C411;
+}
+
+.areaCard {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--card-bg); 
+  border: 1px solid var(--border-color); 
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+  transition: all 0.3s ease;
+}
+
+.areaCard:hover {
+  border-color: var(--text-highlight);
+  transform: translateY(-2px);
+  cursor: pointer;
+}
+
+.cardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.areaInfo h3 { 
+  font-size: 16px; 
+  color: var(--text-highlight); 
+  margin: 0; 
+}
+
+.areaInfo p { 
+  font-size: 12px; 
+  color: var(--text-secondary); 
+  margin: 4px 0 0; 
+}
+
+.mapIconCircle {
+  background: var(--map-circle-bg); 
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cardDivider {
+  height: 1px;
+  background: var(--divider-color); 
+  margin: 16px 0;
+}
+
+.cultureLabel {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--text-muted); 
+  font-weight: 600;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.cultureInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-highlight);
+  font-weight: 500;
+}

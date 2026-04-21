@@ -25,7 +25,7 @@ export function Sidebar({ isOpen, onClose, onOpen, logo }: SidebarProps) {
 
   return (
     <>
-      <div className="hamburguerWrapper">
+      <div className={styles.hamburgerWrapper}>
         {!isOpen && (
         <button className={styles.hamburger} onClick={onOpen} aria-label="Abrir menu">
           <Menu size={24} />
@@ -51,7 +51,7 @@ export function Sidebar({ isOpen, onClose, onOpen, logo }: SidebarProps) {
         <nav className={styles.navSection}>
           <p className={styles.sectionTitle}>Organização</p>
           <Link to="/" className={styles.navItem}><LayoutGrid size={18} /> Visão Geral</Link>
-          <Link to="" className={styles.navItem}><Layers size={18} /> Gestão</Link>
+          <Link to="/GestaoPropriedade" className={styles.navItem}><Layers size={18} /> Gestão</Link>
           <Link to="" className={styles.navItem}><Banknote size={18} /> Finanças</Link>
           <Link to="/Relatorio" className={styles.navItem}><ClipboardList size={18} /> Relatório</Link>
           
