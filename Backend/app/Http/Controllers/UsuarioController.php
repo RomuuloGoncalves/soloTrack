@@ -59,7 +59,32 @@ class UsuarioController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $usuario = Usuario::find($id);
+
+        if (!$usuario) {
+            return $this->error('Usuário não encontrado', 404);
+        }
+
+        if ($request->user()->id !== $usuario->id) {
+            return $this->error('Sem permissão para alterar este usuário', 403);
+        }
+
+        $dados = $request->validate([
+            'nome'                  => 'sometimes|string|max:255',
+            'email'                 => 'sometimes|email|unique:usuarios,email,' . $usuario->id,
+            'password'              => 'sometimes|min:8|confirmed',
+            'password_confirmation' => 'sometimes',
+        ], [
+            'nome.max'               => 'O nome não pode ter mais de 255 caracteres.',
+            'email.email'            => 'O e-mail deve ser válido.',
+            'email.unique'           => 'Este e-mail já está em uso.',
+            'password.min'           => 'A senha deve ter no mínimo 8 caracteres.',
+            'password.confirmed'     => 'As senhas não coincidem.',
+        ]);
+
+        $usuario->update($dados);
+
+        return $this->success($usuario->fresh(), 'Dados atualizados com sucesso');
     }
 
     /**

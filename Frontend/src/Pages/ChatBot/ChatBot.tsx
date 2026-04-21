@@ -65,7 +65,7 @@ export function ChatBot() {
     }
   };
 
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  // const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const isChatStarted = messages.length > 0;
 
   return (

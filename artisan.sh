@@ -10,6 +10,7 @@ echo "Selecione o comando que deseja rodar na sua API:"
 
 PS3="👉 Digite o número da opção e aperte Enter: "
 opcoes=(
+    "Instalar Dependências (composer install)"
     "Migrate (Criar tabelas novas)"
     "Migrate Fresh (Apaga TODAS as tabelas e recria do zero)"
     "Migrate Fresh + Seed (Apaga tudo, recria e popula com dados)"
@@ -24,6 +25,11 @@ opcoes=(
 select opt in "${opcoes[@]}"
 do
     case $opt in
+        "Instalar Dependências (composer install)")
+            echo "Rodando composer install no container..."
+            docker exec -it $CONTAINER composer install
+            break
+            ;;
         "Migrate (Criar tabelas novas)")
             echo "Rodando php artisan migrate..."
             docker exec -it $CONTAINER php artisan migrate

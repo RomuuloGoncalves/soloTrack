@@ -21,7 +21,21 @@ api.interceptors.request.use(
 
     return config;
   },
-  (error: any) => {
+  (error: any) => Promise.reject(error)
+);
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      Cookies.remove('token');
+      localStorage.removeItem('usuario');
+      const rotasPublicas = ['/', '/login', '/signup'];
+      const rotaAtual = window.location.hash.replace('#', '') || '/';
+      if (!rotasPublicas.includes(rotaAtual)) {
+        window.location.hash = '#/login';
+      }
+    }
     return Promise.reject(error);
   }
 );
