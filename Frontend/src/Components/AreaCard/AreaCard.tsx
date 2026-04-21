@@ -1,15 +1,23 @@
 import { Map, Sprout } from 'lucide-react';
 import styles from './AreaCard.module.css';
+import { useNavigate } from 'react-router-dom';
 
 interface AreaCardProps {
+  id: number;
   nome: string;
   tamanho: string;
   cultura: string;
 }
 
-export function AreaCard({ nome, tamanho, cultura }: AreaCardProps) {
+export function AreaCard({ id, nome, tamanho, cultura }: AreaCardProps) {
+  const navigate = useNavigate();
+  const handleAbrirDetalhes = () => {
+    navigate(`/detalhearea/${id}`);
+  };
   return (
-    <div className={styles.areaCard}>
+    <div className={styles.areaCard}
+      onClick={handleAbrirDetalhes}
+    >
       <div className={styles.cardTop}>
         <div className={styles.areaInfo}>
           <h3>{nome}</h3>

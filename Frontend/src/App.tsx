@@ -8,6 +8,7 @@ import NotFoundPage from "./Pages/public/NotFoundPage/NotFoundPage";
 import ChatBot from "./Pages/ChatBot/ChatBot";
 import Relatorio from "./Pages/Relatorio/Relatorio";
 import GestaoPropriedade from "./Pages/GestaoPropriedade/GestaoPropriedade";
+import DetalheArea from "./Pages/DetalheArea/DetalheArea";
 
 import { useTheme } from "./hooks/useTheme";
 import { ToastProvider } from "./contexts/ToastContext";
@@ -39,7 +40,10 @@ function App() {
               <RotaPrivada><Relatorio /></RotaPrivada>
             } />
             <Route path="/gestaopropriedade" element={
-              <RotaPrivada><GestaoPropriedade /></RotaPrivada>
+              <RotaPublica><GestaoPropriedade /></RotaPublica>
+            } />
+            <Route path="/detalhearea/:id" element={
+              <RotaPublica><DetalheArea /></RotaPublica>
             } />
 
             <Route path="*" element={<NotFoundPage />} />

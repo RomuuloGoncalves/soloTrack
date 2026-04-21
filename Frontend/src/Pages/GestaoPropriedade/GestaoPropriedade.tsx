@@ -15,6 +15,14 @@ export function GestaoPropriedade() {
 
   const logo = useMemo(() => theme === 'dark' ? darkLogo : lightLogo, [theme]);
 
+  const areas = [
+    { id: '1', nome: 'Estufa norte', tamanho: '250m²', cultura: 'Tomate cereja' },
+    { id: '2', nome: 'Setor Sul', tamanho: '180m²', cultura: 'Alface Lisa' },
+    { id: '3', nome: 'Setor Sul', tamanho: '180m²', cultura: 'Alface Lisa' },
+    { id: '4', nome: 'Campo Aberto', tamanho: '500m²', cultura: 'Milho' },
+    { id: '5', nome: 'Campo Aberto', tamanho: '500m²', cultura: 'Milho' }
+  ];
+
   return (
     <div className={styles.pageLayout}>
       <Sidebar
@@ -118,16 +126,15 @@ export function GestaoPropriedade() {
             </div>
 
             <div className={styles.areasGrid}>
-              <AreaCard
-                nome="Estufa norte"
-                tamanho="250m²"
-                cultura="Tomate cereja"
-              />
-              <AreaCard
-                nome="Setor Sul"
-                tamanho="180m²"
-                cultura="Alface Lisa"
-              />
+              {areas.map((area) => (
+                  <AreaCard
+                    key={area.id}
+                    id={area.id}
+                    nome={area.nome}
+                    tamanho={area.tamanho}
+                    cultura={area.cultura}
+                  />
+                ))}
             </div>
           </div>
         )}
