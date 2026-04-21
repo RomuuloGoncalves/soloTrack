@@ -62,32 +62,35 @@
 .formSection {
   flex: 1;
   display: flex;
-  justify-content: center;
+  justify-content: left;
   align-items: center;
-  padding: 3rem 2rem;
+  padding: 3rem 0rem;
 }
 
 .formContainer {
   width: 100%;
-  max-width: 360px;
+  max-width: 525px;
+  margin-left: 50px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: left;
 }
 
 .logoContainer {
-  margin-bottom: 4rem;
-  text-align: center;
+  /* margin-bottom: 3rem; */
+  text-align: left;
+  /* justify-content: center; */
   width: 100%;
 }
 
 .titleLogo {
-  font-size: 3.2rem;
+  font-size: 2.8rem; 
   font-weight: var(--font-title-weight);
   font-family: var(--font-family);
   color: var(--color-primary);
   margin: 0;
-  letter-spacing: -2px;
+
+  /* letter-spacing: -2px; */
 }
 
 :global([data-theme="dark"]) .titleLogo {
@@ -173,8 +176,8 @@
 }
 
 .submitButton {
-  margin-top: 1.5rem;
-  width: 100%;
+  margin-top: 2rem;
+  width: 70%;
   padding: 0.85rem;
   font-size: var(--font-text-size);
   font-family: var(--font-family);
@@ -217,9 +220,16 @@
   font-size: 0.9rem;
   font-family: var(--font-family);
   color: var(--color-details);
-  text-align: center;
+  text-align: left;
 }
-
+.MainText {
+  margin-top: 2rem;
+  margin-bottom: 1.5rem;
+  font-size: 1.9rem;
+  font-family: var(--font-family);
+  color: var(--color-details);
+  text-align: left;
+}
 .link {
   color: var(--color-details);
   text-decoration: none;
