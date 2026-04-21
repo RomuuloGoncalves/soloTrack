@@ -96,6 +96,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/areas-plantio": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["areas-plantio.index"];
+        put?: never;
+        post: operations["areas-plantio.store"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/areas-plantio/{areas_plantio}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["areas-plantio.show"];
+        put: operations["areas-plantio.update"];
+        post?: never;
+        delete: operations["areas-plantio.destroy"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/login": {
         parameters: {
             query?: never;
@@ -145,43 +177,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/usuarios": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Display a listing of the resource */
-        get: operations["usuarios.index"];
-        put?: never;
-        /** Store a newly created resource in storage */
-        post: operations["usuarios.store"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/usuarios/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Display the specified resource */
-        get: operations["usuarios.show"];
-        /** Update the specified resource in storage */
-        put: operations["usuarios.update"];
-        post?: never;
-        /** Remove the specified resource from storage */
-        delete: operations["usuarios.destroy"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/culturas": {
         parameters: {
             query?: never;
@@ -219,7 +214,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/propriedades": {
+    "/equipamentos": {
         parameters: {
             query?: never;
             header?: never;
@@ -227,9 +222,118 @@ export interface paths {
             cookie?: never;
         };
         /** Display a listing of the resource */
-        get: operations["propriedades.index"];
+        get: operations["equipamentos.index"];
         put?: never;
         /** Store a newly created resource in storage */
+        post: operations["equipamentos.store"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/equipamentos/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Display the specified resource */
+        get: operations["equipamentos.show"];
+        /** Update the specified resource in storage */
+        put: operations["equipamentos.update"];
+        post?: never;
+        /** Remove the specified resource from storage */
+        delete: operations["equipamentos.destroy"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/insumos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Display a listing of the resource */
+        get: operations["insumos.index"];
+        put?: never;
+        /** Store a newly created resource in storage */
+        post: operations["insumos.store"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/insumos/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Display the specified resource */
+        get: operations["insumos.show"];
+        /** Update the specified resource in storage */
+        put: operations["insumos.update"];
+        post?: never;
+        /** Remove the specified resource from storage */
+        delete: operations["insumos.destroy"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/leituras": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Display a listing of the resource */
+        get: operations["leituras.index"];
+        put?: never;
+        /** Store a newly created resource in storage */
+        post: operations["leituras.store"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/leituras/{leitura}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Display the specified resource */
+        get: operations["leituras.show"];
+        /** Update the specified resource in storage */
+        put: operations["leituras.update"];
+        post?: never;
+        /** Remove the specified resource from storage */
+        delete: operations["leituras.destroy"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/propriedades": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["propriedades.index"];
+        put?: never;
         post: operations["propriedades.store"];
         delete?: never;
         options?: never;
@@ -244,13 +348,84 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Display the specified resource */
         get: operations["propriedades.show"];
-        /** Update the specified resource in storage */
         put: operations["propriedades.update"];
         post?: never;
-        /** Remove the specified resource from storage */
         delete: operations["propriedades.destroy"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/tipos-sensores": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Display a listing of the resource */
+        get: operations["tipos-sensores.index"];
+        put?: never;
+        /** Store a newly created resource in storage */
+        post: operations["tipos-sensores.store"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/tipos-sensores/{tipos_sensore}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Display the specified resource */
+        get: operations["tipos-sensores.show"];
+        /** Update the specified resource in storage */
+        put: operations["tipos-sensores.update"];
+        post?: never;
+        /** Remove the specified resource from storage */
+        delete: operations["tipos-sensores.destroy"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/usuarios": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Display a listing of the resource */
+        get: operations["usuarios.index"];
+        put?: never;
+        /** Store a newly created resource in storage */
+        post: operations["usuario.store"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/usuarios/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Display the specified resource */
+        get: operations["usuarios.show"];
+        /** Update the specified resource in storage */
+        put: operations["usuarios.update"];
+        post?: never;
+        /** Remove the specified resource from storage */
+        delete: operations["usuarios.destroy"];
         options?: never;
         head?: never;
         patch?: never;
@@ -260,6 +435,90 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AreaPlantio */
+        AreaPlantio: {
+            id: number;
+            propriedade_id: number;
+            qr_code_hash: string;
+            nome_area: string;
+            tamanho_area_m2: string | null;
+            latitude: string | null;
+            longitude: string | null;
+            /** Format: date-time */
+            created_at: string | null;
+            /** Format: date-time */
+            updated_at: string | null;
+            deleted_at: string | null;
+        };
+        /** Cultura */
+        Cultura: {
+            id: number;
+            nome_cultura: string;
+            descricao: string | null;
+            /** Format: date-time */
+            created_at: string | null;
+            /** Format: date-time */
+            updated_at: string | null;
+            deleted_at: string | null;
+        };
+        /** Equipamento */
+        Equipamento: {
+            id: number;
+            usuario_id: number;
+            mac_address: string;
+            nome_apelido: string | null;
+            ativo: number;
+            /** Format: date-time */
+            created_at: string | null;
+            /** Format: date-time */
+            updated_at: string | null;
+            deleted_at: string | null;
+        };
+        /** Insumo */
+        Insumo: {
+            id: number;
+            usuario_id: number;
+            nome_fertilizante: string;
+            preco_pago: string | null;
+            unidade_medida: string;
+            /** Format: date-time */
+            created_at: string | null;
+            /** Format: date-time */
+            updated_at: string | null;
+            deleted_at: string | null;
+        };
+        /** Propriedade */
+        Propriedade: {
+            id: number;
+            nome: string;
+            cidade: string | null;
+            estado: string | null;
+            latitude: string | null;
+            longitude: string | null;
+            tamanho_hectares: string | null;
+            /** Format: date-time */
+            created_at: string | null;
+            /** Format: date-time */
+            updated_at: string | null;
+            deleted_at: string | null;
+        };
+        /** StoreAreaPlantioRequest */
+        StoreAreaPlantioRequest: {
+            propriedade_id: number;
+            nome_area: string;
+            tamanho_area_m2?: number | null;
+            latitude?: number | null;
+            longitude?: number | null;
+        };
+        /** StorePropriedadeRequest */
+        StorePropriedadeRequest: {
+            nome: string;
+            cidade?: string | null;
+            estado?: string | null;
+            latitude?: number | null;
+            longitude?: number | null;
+            tamanho_hectares?: number | null;
+        };
         /** StoreUsuarioRequest */
         StoreUsuarioRequest: {
             nome: string;
@@ -267,6 +526,22 @@ export interface components {
             email: string;
             password: string;
             password_confirmation: string;
+        };
+        /** UpdateAreaPlantioRequest */
+        UpdateAreaPlantioRequest: {
+            nome_area?: string;
+            tamanho_area_m2?: number | null;
+            latitude?: number | null;
+            longitude?: number | null;
+        };
+        /** UpdatePropriedadeRequest */
+        UpdatePropriedadeRequest: {
+            nome?: string;
+            cidade?: string | null;
+            estado?: string | null;
+            latitude?: number | null;
+            longitude?: number | null;
+            tamanho_hectares?: number | null;
         };
         /** Usuario */
         Usuario: {
@@ -310,6 +585,18 @@ export interface components {
                 };
             };
         };
+        /** @description Not found */
+        ModelNotFoundException: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": {
+                    /** @description Error overview. */
+                    message: string;
+                };
+            };
+        };
     };
     parameters: never;
     requestBodies: never;
@@ -318,6 +605,147 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    "areas-plantio.index": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Áreas encontradas";
+                        data: components["schemas"]["AreaPlantio"][];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "areas-plantio.store": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StoreAreaPlantioRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Área criada";
+                        data: components["schemas"]["AreaPlantio"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "areas-plantio.show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                areas_plantio: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Área encontrada";
+                        data: components["schemas"]["AreaPlantio"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "areas-plantio.update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                areas_plantio: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["UpdateAreaPlantioRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Área atualizada";
+                        data: components["schemas"]["AreaPlantio"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "areas-plantio.destroy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                areas_plantio: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Área deletada com sucesso";
+                        data: components["schemas"]["AreaPlantio"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
     "auth.login": {
         parameters: {
             query?: never;
@@ -412,6 +840,7 @@ export interface operations {
                     "application/json": string;
                 };
             };
+            401: components["responses"]["AuthenticationException"];
             422: components["responses"]["ValidationException"];
             500: {
                 headers: {
@@ -423,6 +852,834 @@ export interface operations {
                     };
                 };
             };
+        };
+    };
+    "culturas.index": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Culturas encontradas";
+                        data: components["schemas"]["Cultura"][];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "culturas.store": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Cultura criada";
+                        data: components["schemas"]["Cultura"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "culturas.show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Cultura encontrada";
+                        data: string;
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Cultura não encontrada";
+                        errors: string;
+                    };
+                };
+            };
+        };
+    };
+    "culturas.update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "culturas.destroy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Cultura deletada com sucesso";
+                        data: string;
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Cultura não encontrada";
+                        errors: string;
+                    };
+                };
+            };
+        };
+    };
+    "equipamentos.index": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Equipamentos encontrados";
+                        data: components["schemas"]["Equipamento"][];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "equipamentos.store": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Equipamento criado";
+                        data: components["schemas"]["Equipamento"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "equipamentos.show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Equipamento encontrado";
+                        data: string;
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Equipamento não encontrado";
+                        errors: string;
+                    };
+                };
+            };
+        };
+    };
+    "equipamentos.update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "equipamentos.destroy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Equipamento deletado com sucesso";
+                        data: string;
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Equipamento não encontrado";
+                        errors: string;
+                    };
+                };
+            };
+        };
+    };
+    "insumos.index": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Insumos encontrados";
+                        data: components["schemas"]["Insumo"][];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "insumos.store": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Insumo criado";
+                        data: components["schemas"]["Insumo"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "insumos.show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Insumo encontrado";
+                        data: string;
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Insumo não encontrado";
+                        errors: string;
+                    };
+                };
+            };
+        };
+    };
+    "insumos.update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "insumos.destroy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Insumo deletado com sucesso";
+                        data: string;
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Insumo não encontrado";
+                        errors: string;
+                    };
+                };
+            };
+        };
+    };
+    "leituras.index": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "leituras.store": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "leituras.show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The leitura ID */
+                leitura: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["AuthenticationException"];
+            404: components["responses"]["ModelNotFoundException"];
+        };
+    };
+    "leituras.update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The leitura ID */
+                leitura: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["AuthenticationException"];
+            404: components["responses"]["ModelNotFoundException"];
+        };
+    };
+    "leituras.destroy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The leitura ID */
+                leitura: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["AuthenticationException"];
+            404: components["responses"]["ModelNotFoundException"];
+        };
+    };
+    "propriedades.index": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Propriedades encontradas";
+                        data: components["schemas"]["Propriedade"][];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "propriedades.store": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StorePropriedadeRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Propriedade criada";
+                        data: components["schemas"]["Propriedade"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "propriedades.show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Propriedade encontrada";
+                        data: string;
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Propriedade não encontrada";
+                        errors: string;
+                    };
+                };
+            };
+        };
+    };
+    "propriedades.update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["UpdatePropriedadeRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Propriedade atualizada";
+                        data: string;
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Propriedade não encontrada";
+                        errors: string;
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "propriedades.destroy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Propriedade deletada com sucesso";
+                        data: string;
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Propriedade não encontrada";
+                        errors: string;
+                    };
+                };
+            };
+        };
+    };
+    "tipos-sensores.index": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "tipos-sensores.store": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "tipos-sensores.show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                tipos_sensore: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "tipos-sensores.update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                tipos_sensore: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "tipos-sensores.destroy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                tipos_sensore: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["AuthenticationException"];
         };
     };
     "usuarios.index": {
@@ -447,9 +1704,10 @@ export interface operations {
                     };
                 };
             };
+            401: components["responses"]["AuthenticationException"];
         };
     };
-    "usuarios.store": {
+    "usuario.store": {
         parameters: {
             query?: never;
             header?: never;
@@ -515,6 +1773,7 @@ export interface operations {
                     };
                 };
             };
+            401: components["responses"]["AuthenticationException"];
         };
     };
     "usuarios.update": {
@@ -526,14 +1785,59 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    nome?: string;
+                    /** Format: email */
+                    email?: string;
+                    password?: string;
+                    password_confirmation?: string;
+                };
+            };
+        };
         responses: {
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Dados atualizados com sucesso";
+                        data: string;
+                    };
+                };
             };
+            401: components["responses"]["AuthenticationException"];
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Sem permissão para alterar este usuário";
+                        errors: string;
+                    };
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Usuário não encontrado";
+                        errors: string;
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
         };
     };
     "usuarios.destroy": {
@@ -553,266 +1857,7 @@ export interface operations {
                 };
                 content?: never;
             };
-        };
-    };
-    "culturas.index": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        success: boolean;
-                        /** @constant */
-                        message: "Usuários encontrados";
-                        data: components["schemas"]["Usuario"][];
-                    };
-                };
-            };
-        };
-    };
-    "culturas.store": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["StoreUsuarioRequest"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        success: boolean;
-                        /** @constant */
-                        message: "Usuário criado";
-                        data: components["schemas"]["Usuario"];
-                    };
-                };
-            };
-            422: components["responses"]["ValidationException"];
-        };
-    };
-    "culturas.show": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        success: boolean;
-                        /** @constant */
-                        message: "Usuário encontrado";
-                        data: string;
-                    };
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        success: boolean;
-                        /** @constant */
-                        message: "Usuário não encontrado";
-                        errors: string;
-                    };
-                };
-            };
-        };
-    };
-    "culturas.update": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    "culturas.destroy": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    "propriedades.index": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        success: boolean;
-                        /** @constant */
-                        message: "Usuários encontrados";
-                        data: components["schemas"]["Usuario"][];
-                    };
-                };
-            };
-        };
-    };
-    "propriedades.store": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["StoreUsuarioRequest"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        success: boolean;
-                        /** @constant */
-                        message: "Usuário criado";
-                        data: components["schemas"]["Usuario"];
-                    };
-                };
-            };
-            422: components["responses"]["ValidationException"];
-        };
-    };
-    "propriedades.show": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        success: boolean;
-                        /** @constant */
-                        message: "Usuário encontrado";
-                        data: string;
-                    };
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        success: boolean;
-                        /** @constant */
-                        message: "Usuário não encontrado";
-                        errors: string;
-                    };
-                };
-            };
-        };
-    };
-    "propriedades.update": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    "propriedades.destroy": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+            401: components["responses"]["AuthenticationException"];
         };
     };
 }
