@@ -33,7 +33,7 @@ function Login() {
       entrar(access_token, usuario);
 
       showToast(message || 'Login realizado com sucesso!', 'success');
-      navigate('/');
+      navigate('/gestaopropriedade');
     } catch (error: any) {
       if (error.response) {
         const { status, data } = error.response;

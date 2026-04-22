@@ -4,5 +4,5 @@ import type { ReactNode } from 'react';
 
 export function RotaPublica({ children }: { children: ReactNode }) {
   const { estaAutenticado } = useAutenticacao();
-  return estaAutenticado ? <Navigate to="/" replace /> : <>{children}</>;
+  return estaAutenticado ? <Navigate to="/gestaopropriedade" replace /> : <>{children}</>;
 }

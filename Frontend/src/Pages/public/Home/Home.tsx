@@ -1,7 +1,14 @@
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import style from './Home.module.css';
+import { useAutenticacao } from '../../../contexts/ContextoAuth';
 
 function PublicHome() {
+  const { estaAutenticado } = useAutenticacao();
+
+  if (estaAutenticado) {
+    return <Navigate to="/gestaopropriedade" replace />;
+  }
+
   return (
     <div className={style.pageWrapper}>
       <div className={style.mainContent}>
