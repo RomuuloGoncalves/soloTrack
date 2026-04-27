@@ -13,7 +13,8 @@ interface Dispositivo {
   id: number;
   nome: string;
   mac: string;
-  status: "online" | "offline";
+  // status: "online" | "offline";
+  status: string;
   sensores?: Sensor[];
 }
 
@@ -33,7 +34,8 @@ function Accordion({ dispositivo }: Props) {
 
     const handleToggle = () => {
       const content = el.querySelector(`.${styles.expandedContent}`);
-      if (el.open && content) {
+
+      if (el.open && content instanceof HTMLElement) {
         content.classList.remove(styles.resetAnimation);
         void content.offsetWidth;
         content.classList.add(styles.resetAnimation);
