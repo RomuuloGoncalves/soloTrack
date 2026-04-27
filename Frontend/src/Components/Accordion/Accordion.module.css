@@ -1,0 +1,202 @@
+/* Animação Fade In */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.expandedContent {
+  padding: 0 24px 24px 24px;
+}
+
+.resetAnimation {
+  animation: fadeIn 1s ease-out forwards;
+}
+
+.row {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin: 0 auto;
+  gap: 16px;
+  @media (max-width: 468px) {
+    align-items: normal;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
+/* Accordion */
+.accordion {
+  max-width: 500px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  flex-grow: 1;
+  overflow: hidden;
+  border: 1px solid #edf2f7;
+}
+
+.accordion summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.accordion summary::-webkit-details-marker {
+  display: none;
+}
+
+.accordion[open] summary {
+  padding-bottom: 16px;
+}
+
+.arrowIcon {
+  transition: transform 0.3s ease;
+  color: #1a3b32;
+}
+
+.accordion[open] .arrowIcon {
+  transform: rotate(180deg);
+}
+
+/* Informações */
+.infoHeader h3 {
+  margin-bottom: 6px;
+  text-align: start;
+  color: #1c3d33;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.mac {
+  margin: 0 0 6px 0;
+  color: #718096;
+  font-size: 12px;
+}
+
+.status {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.statusGreen {
+  color: #10b981;
+}
+.statusGreen .dot {
+  background-color: #10b981;
+}
+
+.statusRed {
+  color: #ef4444;
+}
+.statusRed .dot {
+  background-color: #ef4444;
+}
+
+/* Ações */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  @media (max-width: 468px) {
+    flex-direction: row;
+    justify-content: center;
+  }
+}
+
+.btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  transition: filter 0.2s;
+}
+
+.btn:hover {
+  filter: brightness(1.1);
+}
+.btnDelete {
+  background-color: #cd1a2b;
+}
+.btnEdit {
+  background-color: #1c3d33;
+}
+
+
+
+/* Sensores */
+.divider {
+  height: 1px;
+  background-color: #e2e8f0;
+  margin: 0 0 20px 0;
+}
+
+.sensorList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sensorItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.sensorBadge {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.badgeGreen {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+.badgeRed {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.sensorInfo h4 {
+  color: #1c3d33;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.noSensors{
+    color: var(--color-primary);
+}
