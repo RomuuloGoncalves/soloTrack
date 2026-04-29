@@ -10,6 +10,7 @@ import Relatorio from "./Pages/Relatorio/Relatorio";
 import GestaoPropriedade from "./Pages/GestaoPropriedade/GestaoPropriedade";
 import DetalheArea from "./Pages/DetalheArea/DetalheArea";
 import VisaoGeral from "./Pages/VisaoGeral/VisaoGeral";
+import Dispositivos from "./Pages/Dispositivos/Dispositivos";
 
 import { useTheme } from "./hooks/useTheme";
 import { ToastProvider } from "./contexts/ToastContext";
@@ -42,6 +43,9 @@ function App() {
             } />
             <Route path="/gestaopropriedade" element={
               <RotaPrivada><GestaoPropriedade /></RotaPrivada>
+            } />
+            <Route path="/dispositivos" element={
+              <RotaPrivada><Dispositivos /></RotaPrivada>
             } />
             <Route path="/detalhearea/:id" element={
               <RotaPrivada><DetalheArea /></RotaPrivada>
