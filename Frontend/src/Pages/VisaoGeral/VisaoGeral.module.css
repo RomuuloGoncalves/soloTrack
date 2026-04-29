@@ -1,0 +1,371 @@
+.pageLayout {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  width: 100%;
+}
+
+.mainContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px; 
+  padding: 16px 40px 16px 40px; 
+  margin-left: 240px;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.filtersRow {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  max-width: 1000px;
+}
+
+.filterSelect {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px 16px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filterSelect:hover {
+  border-color: var(--text-highlight);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+.filterSelect select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding-right: 8px;
+  border: none;
+  background: transparent;
+  outline: none;
+  cursor: pointer;
+  color: inherit;
+}
+
+.filterSeparator {
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.summarySection {
+  background-color: var(--card-bg);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+  position: relative;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  gap: 40px;
+  width: 100%;
+  max-width: 1000px;
+}
+
+.summaryTitle {
+  position: absolute;
+  top: 16px;
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.kpiCard {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-top: 16px;
+}
+
+.kpiInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.kpiInfo h3 {
+  font-size: 36px;
+  font-weight: 600;
+  color: var(--text-main);
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.kpiInfo h3 span {
+  font-size: 20px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.kpiInfo p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 4px 0 0 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.kpiColorDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.chartContainer {
+  background-color: var(--card-bg);
+  border-radius: 16px;
+  padding: 16px 24px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  min-width: 0; 
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1000px;
+}
+
+.chartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.chartTitle h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-main);
+  margin: 0 0 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chartTitle p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.linkVerTudo {
+  color: var(--text-highlight);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: opacity 0.2s;
+}
+
+.linkVerTudo:hover {
+  opacity: 0.8;
+}
+
+.chartScrollWrapper {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  overflow-x: auto; 
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch; 
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+  height: 100%;
+}
+
+.chartScrollWrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.chartScrollWrapper::-webkit-scrollbar-thumb {
+  background-color: var(--border-color);
+  border-radius: 10px;
+}
+
+.chartInnerArea {
+  width: 100%;
+  height: 100%;
+  min-width: 500px; 
+}
+
+.customLegend {
+  padding-top: 20px;
+}
+
+.chartLayoutBox {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+}
+
+.myCustomLegend {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; 
+  flex: 0 0 40%;
+  width: 40%;
+  justify-content: center;
+  align-items: center;
+  padding-left: 0;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 12px; 
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  min-width: 120px; 
+}
+
+.legendDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+@media (max-width: 1024px) {
+  .mainContent {
+      padding: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .pageLayout {
+    flex-direction: column;
+  }
+  
+  .mainContent {
+    height: auto;
+    overflow-y: visible;
+    padding: 100px 20px 40px 20px;
+    margin-left: 0;
+  }
+
+  .filtersRow {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .filterSelect {
+    flex: 1 1 45%; 
+    justify-content: center;
+  }
+
+  .filterSeparator {
+    width: 100%;
+    text-align: center;
+    margin: -4px 0;
+  }
+
+  .summarySection {
+    flex-direction: column;
+    gap: 24px;
+    padding-top: 48px;
+  }
+
+  .kpiCard {
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+    gap: 24px;
+  }
+
+  .kpiInfo {
+    align-items: flex-start;
+  }
+
+  .chartContainer {
+    width: 100%;
+    max-width: calc(100vw - 32px);
+    padding: 16px;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .chartHeader {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .chartTitle h3 {
+    font-size: 13px;
+    line-height: 1.2;
+  }
+
+   .chartLayoutBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  .chartScrollWrapper {
+    width: 100%;
+    overflow: hidden;
+    display: block;
+    height: 250px;
+  }
+
+  .myCustomLegend {
+    flex: none;
+    width: 100%;
+    flex-direction: row;
+    gap: 32px; 
+    padding-top: 16px;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .legendItem {
+    min-width: auto;
+    gap: 8px;
+  }
+
+  .customTooltipWrapper {
+    max-width: 150px;
+    white-space: normal;
+  }
+
+  .chartInnerArea {
+    min-width: 0; 
+    width: 100%;
+    height: 250px;
+  }
+}

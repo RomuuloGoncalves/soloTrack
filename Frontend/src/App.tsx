@@ -9,6 +9,7 @@ import ChatBot from "./Pages/ChatBot/ChatBot";
 import Relatorio from "./Pages/Relatorio/Relatorio";
 import GestaoPropriedade from "./Pages/GestaoPropriedade/GestaoPropriedade";
 import DetalheArea from "./Pages/DetalheArea/DetalheArea";
+import VisaoGeral from "./Pages/VisaoGeral/VisaoGeral";
 
 import { useTheme } from "./hooks/useTheme";
 import { ToastProvider } from "./contexts/ToastContext";
@@ -44,6 +45,9 @@ function App() {
             } />
             <Route path="/detalhearea/:id" element={
               <RotaPrivada><DetalheArea /></RotaPrivada>
+            } />
+            <Route path="/visaogeral" element={
+              <RotaPrivada><VisaoGeral /></RotaPrivada>
             } />
 
             <Route path="*" element={<NotFoundPage />} />

@@ -52,7 +52,7 @@
 
 .navItem { 
   display: flex; 
-  align-items: center; 
+  align-items: center;    
   gap: 12px; 
   padding: 12px; 
   color: var(--sidebar-text); 
