@@ -1,8 +1,8 @@
-import React, { useState, useMemo } from 'react'; // CORREÇÃO 1: Adicionado useMemo
+import { useState, useMemo } from 'react'; // CORREÇÃO 1: Adicionado useMemo
 import { Calendar, Cpu, Sprout, ArrowUpRight, TrendingUp } from 'lucide-react';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  BarChart, Bar, Legend
+  BarChart, Bar
 } from 'recharts';
 import styles from './VisaoGeral.module.css';
 import { Sidebar } from '../../Components/Sidebar/Sidebar';
@@ -10,7 +10,6 @@ import lightLogo from '../../assets/images/Light-logo.svg';
 import darkLogo from '../../assets/images/Dark-Logo.svg';
 import { useTheme } from '../../hooks/useTheme';
 
-// --- DADOS MOCKADOS (Depois virão do seu banco de dados) ---
 const dadosEvolucao = [
   { name: 'Mon', ideal: 100, real: 57 },
   { name: 'Tue', ideal: 120, real: 300 },
@@ -47,16 +46,13 @@ const DonutProgress = ({ percentage, color }: { percentage: number, color: strin
 };
 
 export function VisaoGeral() {
-  // Estados para os filtros
   const [dataInicio, setDataInicio] = useState('Março de 2026');
   const [dataFim, setDataFim] = useState('Março de 2026');
   const [equipamento, setEquipamento] = useState('ESP32');
   const [estufa, setEstufa] = useState('Estufa 1');
   
-  // CORREÇÃO 2: Criado o estado para controlar a abertura da Sidebar
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // CORREÇÃO 3: Declarada a variável theme (substitua pelo seu hook de tema se existir)
   const { theme } = useTheme();
   const logo = useMemo(() => theme === 'dark' ? darkLogo : lightLogo, [theme]);
   
@@ -175,7 +171,6 @@ export function VisaoGeral() {
           </div>
           
           <div className={styles.chartLayoutBox}>
-            {/* O Gráfico (Sem a tag Legend) */}
             <div className={styles.chartScrollWrapper}>
               <div className={styles.chartInnerArea}>
                 <ResponsiveContainer width="100%" height="100%">
@@ -192,7 +187,6 @@ export function VisaoGeral() {
               </div>
             </div>
 
-            {/* SUA LEGENDA CUSTOMIZADA (100% controlável por CSS) */}
             <div className={styles.myCustomLegend}>
               <div className={styles.legendItem}>
                 <span className={styles.legendDot} style={{ backgroundColor: '#254E4A' }}></span>
