@@ -20,6 +20,7 @@ class StorePropriedadeRequest extends FormRequest
             'latitude'         => 'nullable|numeric|between:-90,90',
             'longitude'        => 'nullable|numeric|between:-180,180',
             'tamanho_hectares' => 'nullable|numeric|min:0',
+            'usuario_id'       => 'nullable|integer',
         ];
     }
 

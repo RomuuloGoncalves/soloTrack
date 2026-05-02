@@ -39,8 +39,16 @@ class CriarPropriedadeTool
                         'type' => 'number',
                         'description' => 'Tamanho total da propriedade em hectares',
                     ],
+                    'usuario_id' => [
+                        'type' => 'integer',
+                        'description' => 'ID do usuário logado para vincular à propriedade',
+                    ],
+                    'confirmar_atualizacao' => [
+                        'type' => 'boolean',
+                        'description' => 'Passe true se o usuário confirmou que deseja atualizar a propriedade existente',
+                    ],
                 ],
-                'required' => ['nome'],
+                'required' => ['nome', 'usuario_id'],
             ],
         ];
     }
@@ -54,6 +62,8 @@ class CriarPropriedadeTool
             'latitude'         => 'nullable|numeric|between:-90,90',
             'longitude'        => 'nullable|numeric|between:-180,180',
             'tamanho_hectares' => 'nullable|numeric|min:0',
+            'usuario_id'       => 'required|integer',
+            'confirmar_atualizacao' => 'nullable|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -63,7 +73,34 @@ class CriarPropriedadeTool
             ];
         }
 
-        $propriedade = Propriedade::create($validator->validated());
+        $validated = $validator->validated();
+        $usuarioId = $validated['usuario_id'];
+        $confirmarAtualizacao = $validated['confirmar_atualizacao'] ?? false;
+        
+        unset($validated['usuario_id']);
+        unset($validated['confirmar_atualizacao']);
+        
+        $usuario = \App\Models\Usuario::find($usuarioId);
+        $propriedadeExistente = $usuario ? $usuario->propriedades()->first() : null;
+
+        if ($propriedadeExistente && !$confirmarAtualizacao) {
+            return [
+                'sucesso' => false,
+                'mensagem' => "O usuário já possui a fazenda '{$propriedadeExistente->nome}'. Você DEVE perguntar se ele deseja atualizar os dados dela. Não crie uma nova. Se ele disser sim, chame a ferramenta novamente com 'confirmar_atualizacao' = true.",
+            ];
+        }
+
+        if ($propriedadeExistente && $confirmarAtualizacao) {
+            $propriedadeExistente->update($validated);
+            return [
+                'sucesso' => true,
+                'mensagem' => "Fazenda '{$propriedadeExistente->nome}' atualizada com sucesso!",
+                'propriedade' => $propriedadeExistente->toArray(),
+            ];
+        }
+        
+        $propriedade = Propriedade::create($validated);
+        $propriedade->usuarios()->attach($usuarioId, ['nivel_acesso' => 'admin']);
 
         return [
             'sucesso' => true,

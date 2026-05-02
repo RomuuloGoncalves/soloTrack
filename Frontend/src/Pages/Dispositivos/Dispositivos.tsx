@@ -5,14 +5,14 @@ import darkLogo from "../../assets/images/Dark-Logo.svg";
 import lightLogo from "../../assets/images/Light-logo.svg";
 import styles from "./Dispositivos.module.css";
 import { Plus, Search, Cpu, Activity, Wifi } from "lucide-react";
-import Accordion from "../../Components/Accordion/Accordion";
+import Accordion, { type Dispositivo } from "../../Components/Accordion/Accordion";
 
 function Dispositivos() {
   const { theme } = useTheme();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Retirar apos a integraçao
-  const dispositivosMock = [
+  const dispositivosMock: Dispositivo[] = [
   {
     id: 1,
     nome: "Estação Norte",

@@ -30,7 +30,9 @@ class GeminiService
             ];
         }
 
-        $response = Http::withHeaders([
+        $response = Http::withOptions([
+            'force_ip_resolve' => 'v4'
+        ])->withHeaders([
             'Content-Type' => 'application/json',
         ])->post($this->baseUrl . '?key=' . $this->apiKey, $payload);
 

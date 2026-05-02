@@ -3,6 +3,7 @@ import { SendHorizontal, Loader2 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useTheme } from '../../hooks/useTheme';
+import { useAutenticacao } from '../../contexts/ContextoAuth';
 import { Sidebar } from '../../Components/Sidebar/Sidebar';
 import styles from './ChatBot.module.css';
 import lightLogo from '../../assets/images/Light-logo.svg';
@@ -11,6 +12,7 @@ import serverService from '../../services/serverService';
 
 export function ChatBot() {
   const { theme } = useTheme();
+  const { usuario } = useAutenticacao();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<{ role: 'user' | 'ai'; content: string }[]>([]);
@@ -28,11 +30,22 @@ export function ChatBot() {
     setIsLoading(true);
 
     try {
-      const geminiHistory = messages.map(msg => ({
-        role: msg.role === 'user' ? 'user' : 'model',
-        parts: [{ text: msg.content }]
-      }));
-      geminiHistory.push({ role: 'user', parts: [{ text: message }] });
+      const geminiHistory = [
+        {
+          role: 'user' as const,
+          parts: [{ text: `INSTRUÇÃO DE SISTEMA: O ID do usuário logado no momento é ${usuario?.id}. Ao criar uma propriedade, fazenda ou vincular qualquer dado, SEMPRE passe este ID no campo usuario_id.` }]
+        },
+        {
+          role: 'model' as const,
+          parts: [{ text: 'Entendido, usarei este ID de usuário em todas as operações.' }]
+        },
+        ...messages.map(msg => ({
+          role: msg.role === 'user' ? 'user' : 'model',
+          parts: [{ text: msg.content }]
+        }))
+      ];
+
+      geminiHistory.push({ role: 'user' as const, parts: [{ text: message }] });
 
       const response = await serverService.post<{ candidates: any[], error?: string }>('/mcp/chat', {
         messages: geminiHistory

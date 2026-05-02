@@ -332,8 +332,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** Display a listing of the resource */
         get: operations["propriedades.index"];
         put?: never;
+        /** Store a newly created resource in storage */
         post: operations["propriedades.store"];
         delete?: never;
         options?: never;
@@ -348,7 +350,9 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** Display the specified resource */
         get: operations["propriedades.show"];
+        /** Update the specified resource in storage */
         put: operations["propriedades.update"];
         post?: never;
         delete: operations["propriedades.destroy"];
@@ -1543,7 +1547,7 @@ export interface operations {
                     };
                 };
             };
-            422: components["responses"]["ValidationException"];
+422: components["responses"]["ValidationException"];
         };
     };
     "propriedades.destroy": {

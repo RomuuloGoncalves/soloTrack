@@ -29,7 +29,14 @@ class PropriedadeController extends Controller
      */
     public function store(Request $request)
     {
-        $propriedade = Propriedade::create($request->validated());
+        $validated = $request->validated();
+        $usuarioId = $request->input('usuario_id');
+
+        $propriedade = Propriedade::create($validated);
+
+        if ($usuarioId) {
+            $propriedade->usuarios()->attach($usuarioId, ['nivel_acesso' => 'admin']);
+        }
 
         return $this->success($propriedade, 'Propriedade criada', 201);
     }

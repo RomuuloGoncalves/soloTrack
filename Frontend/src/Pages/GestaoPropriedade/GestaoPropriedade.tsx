@@ -3,6 +3,7 @@ import { Sidebar } from '../../Components/Sidebar/Sidebar';
 import { Target, MapPin, Tractor, Map, X } from 'lucide-react';
 import styles from './GestaoPropriedade.module.css';
 import { useTheme } from '../../hooks/useTheme';
+import { useAutenticacao } from '../../contexts/ContextoAuth';
 import lightLogo from '../../assets/images/Light-logo.svg';
 import darkLogo from '../../assets/images/Dark-Logo.svg';
 import { AreaCard } from '../../Components/AreaCard/AreaCard';
@@ -19,6 +20,7 @@ function primeiroErro(erros: Erros, campo: string): string | undefined {
 
 export function GestaoPropriedade() {
   const { theme } = useTheme();
+  const { usuario } = useAutenticacao();
   const { showToast } = useToast();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('fazenda');
@@ -127,6 +129,14 @@ export function GestaoPropriedade() {
 
   async function handleSubmitPropriedade(e: React.FormEvent) {
     e.preventDefault();
+
+    if (propriedadeId) {
+      const confirmacao = window.confirm('Você já possui uma fazenda cadastrada. Deseja atualizar suas informações?');
+      if (!confirmacao) {
+        return;
+      }
+    }
+
     setErrosPropriedade({});
     setSalvandoPropriedade(true);
     try {
@@ -137,6 +147,7 @@ export function GestaoPropriedade() {
         latitude: latitude ? parseFloat(latitude) : undefined,
         longitude: longitude ? parseFloat(longitude) : undefined,
         tamanho_hectares: tamanhoHectares ? parseFloat(tamanhoHectares) : undefined,
+        usuario_id: usuario?.id,
       };
 
       if (propriedadeId) {

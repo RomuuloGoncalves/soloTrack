@@ -2,14 +2,14 @@ import { useEffect, useRef } from "react";
 import styles from "./Accordion.module.css";
 import { ChevronDown, Trash2, Pencil } from "lucide-react";
 
-interface Sensor {
+export interface Sensor {
   id: number;
   nome: string;
   status: "conectado" | "erro";
   label: string;
 }
 
-interface Dispositivo {
+export interface Dispositivo {
   id: number;
   nome: string;
   mac: string;
