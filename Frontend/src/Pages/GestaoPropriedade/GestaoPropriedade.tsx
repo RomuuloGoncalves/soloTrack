@@ -210,6 +210,10 @@ export function GestaoPropriedade() {
   }
 
   async function handleExcluirArea(id: number) {
+    if (!window.confirm('Tem certeza que deseja excluir esta área?')) {
+      return;
+    }
+    
     try {
       await areaPlantioService.deletar(id);
       setAreas(prev => prev.filter(a => a.id !== id));

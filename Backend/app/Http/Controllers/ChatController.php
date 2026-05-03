@@ -7,6 +7,8 @@ use App\Mcp\Tools\ListarUsuariosTool;
 use App\Mcp\Tools\ListarPropriedadesTool;
 use App\Mcp\Tools\CriarPropriedadeTool;
 use App\Mcp\Tools\CriarAreaPlantioTool;
+use App\Mcp\Tools\ListarAreasPlantioTool;
+use App\Mcp\Tools\ExcluirAreaPlantioTool;
 use Illuminate\Http\Request;
 
 class ChatController extends Controller
@@ -18,6 +20,8 @@ class ChatController extends Controller
         'listar_propriedades' => ListarPropriedadesTool::class,
         'criar_propriedade'  => CriarPropriedadeTool::class,
         'criar_area_plantio' => CriarAreaPlantioTool::class,
+        'listar_areas_plantio'=> ListarAreasPlantioTool::class,
+        'excluir_area_plantio'=> ExcluirAreaPlantioTool::class,
     ];
 
     public function __construct(GeminiService $gemini)

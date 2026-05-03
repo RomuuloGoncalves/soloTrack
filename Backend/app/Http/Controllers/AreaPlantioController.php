@@ -36,26 +36,26 @@ class AreaPlantioController extends Controller
         return $this->success($area, 'Área criada', 201);
     }
 
-    public function show(AreaPlantio $areaPlantio)
+    public function show(AreaPlantio $areas_plantio)
     {
-        return $this->success($areaPlantio, "Área encontrada");
+        return $this->success($areas_plantio, "Área encontrada");
     }
 
-    public function edit(AreaPlantio $areaPlantio)
+    public function edit(AreaPlantio $areas_plantio)
     {
         //
     }
 
-    public function update(UpdateAreaPlantioRequest $request, AreaPlantio $areaPlantio)
+    public function update(UpdateAreaPlantioRequest $request, AreaPlantio $areas_plantio)
     {
-        $areaPlantio->update($request->validated());
+        $areas_plantio->update($request->validated());
 
-        return $this->success($areaPlantio, 'Área atualizada');
+        return $this->success($areas_plantio, 'Área atualizada');
     }
 
-    public function destroy(AreaPlantio $areaPlantio)
+    public function destroy(AreaPlantio $areas_plantio)
     {
-        $areaPlantio->delete();
-        return $this->success($areaPlantio, "Área deletada com sucesso");
+        $areas_plantio->delete();
+        return $this->success($areas_plantio, "Área deletada com sucesso");
     }
 }

@@ -562,7 +562,36 @@ public static function execute(array $args = [])
 
 ---
 
-### 3.8. app/Http/Controllers/ChatController.php
+### 3.8. app/Mcp/Tools/ExcluirAreaPlantioTool.php
+
+**Motivo da criacao:** Permite que a IA possa excluir áreas de plantio já cadastradas. O usuário pode pedir algo como "Exclua a área Talhão Sul", a IA usará o `listar_areas_plantio` para buscar o ID correto e depois o `excluir_area_plantio`.
+
+**Codigo relevante:**
+```php
+public static function execute(array $args = [])
+{
+    $validator = Validator::make($args, [
+        'id' => 'required|integer|exists:area_plantios,id',
+    ]);
+    
+    // ...
+    $area = AreaPlantio::find($args['id']);
+    $areaNome = $area->nome_area;
+    $area->delete();
+    
+    return [
+        'sucesso' => true,
+        'mensagem' => "Área de plantio '{$areaNome}' excluída com sucesso!",
+    ];
+}
+```
+
+- **`exists:area_plantios,id`:** Valida se a área realmente existe no banco de dados.
+- **`$area->delete()`:** Exclui o registro via Eloquent, garantindo que o evento e restrições de cascade funcionem normalmente.
+
+---
+
+### 3.9. app/Http/Controllers/ChatController.php
 
 **Motivo da criacao:** E o orquestrador central do protocolo MCP. Ele e necessario porque o fluxo
 de comunicacao com a IA envolve multiplos passos: enviar a pergunta, verificar se a IA quer dados
@@ -577,6 +606,8 @@ use App\Mcp\Tools\ListarUsuariosTool;
 use App\Mcp\Tools\ListarPropriedadesTool;
 use App\Mcp\Tools\CriarPropriedadeTool;
 use App\Mcp\Tools\CriarAreaPlantioTool;
+use App\Mcp\Tools\ListarAreasPlantioTool;
+use App\Mcp\Tools\ExcluirAreaPlantioTool;
 ```
 
 - Cada ferramenta disponivel no sistema e importada aqui. Para adicionar uma nova ferramenta ao
@@ -588,6 +619,8 @@ protected array $toolMap = [
     'listar_propriedades' => ListarPropriedadesTool::class,
     'criar_propriedade'   => CriarPropriedadeTool::class,
     'criar_area_plantio'  => CriarAreaPlantioTool::class,
+    'listar_areas_plantio'=> ListarAreasPlantioTool::class,
+    'excluir_area_plantio'=> ExcluirAreaPlantioTool::class,
 ];
 ```
 
