@@ -11,6 +11,7 @@ import { useToast } from '../../contexts/ToastContext';
 import propriedadeService from '../../services/propriedadeService';
 import areaPlantioService from '../../services/areaPlantioService';
 import type { Propriedade, AreaPlantio } from '../../types/types';
+import { NovaAreaSidebar } from '../../Components/NovaAreaSidebar/NovaAreaSidebar'; 
 
 type Erros = Record<string, string>;
 
@@ -178,6 +179,10 @@ export function GestaoPropriedade() {
     setLongitudeArea('');
     setErrosArea({});
     setModalAberto(true);
+  }
+
+  function fecharModal() {
+    setModalAberto(false);
   }
 
   async function handleSubmitArea(e: React.FormEvent) {
@@ -402,6 +407,10 @@ export function GestaoPropriedade() {
                   <button className={styles.addAreaBtn} onClick={abrirModal}>
                     <span>+</span> Nova área
                   </button>
+                  <NovaAreaSidebar 
+                    isOpen={modalAberto} 
+                    onClose={fecharModal} 
+                  />
                 </div>
 
                 {loadingAreas ? (
@@ -427,120 +436,6 @@ export function GestaoPropriedade() {
         )}
       </main>
 
-      {modalAberto && (
-        <div className={styles.modalOverlay} onClick={() => setModalAberto(false)}>
-          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-            <div className={styles.modalHeader}>
-              <h2>Nova área de plantio</h2>
-              <button
-                className={styles.modalClose}
-                onClick={() => setModalAberto(false)}
-                aria-label="Fechar"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmitArea}>
-              <div className={styles.modalBody}>
-                <div className={styles.inputGroup}>
-                  <label>Nome da área</label>
-                  <input
-                    type="text"
-                    placeholder="Ex: Estufa Norte"
-                    value={nomeArea}
-                    onChange={e => { setNomeArea(e.target.value); setErrosArea(p => ({ ...p, nome_area: '' })); }}
-                    className={primeiroErro(errosArea, 'nome_area') ? styles.inputError : ''}
-                  />
-                  {primeiroErro(errosArea, 'nome_area') && (
-                    <span className={styles.fieldError}>{primeiroErro(errosArea, 'nome_area')}</span>
-                  )}
-                </div>
-
-                <div className={styles.inputGroup}>
-                  <label>Tamanho (m²)</label>
-                  <input
-                    type="number"
-                    placeholder="Ex: 250"
-                    step="0.01"
-                    value={tamanhoAreaM2}
-                    onChange={e => { setTamanhoAreaM2(e.target.value); setErrosArea(p => ({ ...p, tamanho_area_m2: '' })); }}
-                    className={primeiroErro(errosArea, 'tamanho_area_m2') ? styles.inputError : ''}
-                  />
-                  {primeiroErro(errosArea, 'tamanho_area_m2') && (
-                    <span className={styles.fieldError}>{primeiroErro(errosArea, 'tamanho_area_m2')}</span>
-                  )}
-                </div>
-
-                <div className={styles.geoSection}>
-                  <div className={styles.geoHeader}>
-                    <div className={styles.geoTitle}>
-                      <MapPin size={20} />
-                      <div>
-                        <h3>Localização Geográfica</h3>
-                        <p>Coordenadas centrais da área</p>
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      className={styles.captureBtn}
-                      onClick={() => capturarLocalizacao(setLatitudeArea, setLongitudeArea)}
-                    >
-                      <Target size={16} /> Capturar atual
-                    </button>
-                  </div>
-
-                  <div className={styles.row}>
-                    <div className={styles.inputGroup}>
-                      <label>Latitude</label>
-                      <input
-                        type="text"
-                        placeholder="Ex: -23.550529"
-                        value={latitudeArea}
-                        onChange={e => { setLatitudeArea(e.target.value); setErrosArea(p => ({ ...p, latitude: '' })); }}
-                        className={primeiroErro(errosArea, 'latitude') ? styles.inputError : ''}
-                      />
-                      {primeiroErro(errosArea, 'latitude') && (
-                        <span className={styles.fieldError}>{primeiroErro(errosArea, 'latitude')}</span>
-                      )}
-                    </div>
-                    <div className={styles.inputGroup}>
-                      <label>Longitude</label>
-                      <input
-                        type="text"
-                        placeholder="Ex: -46.633308"
-                        value={longitudeArea}
-                        onChange={e => { setLongitudeArea(e.target.value); setErrosArea(p => ({ ...p, longitude: '' })); }}
-                        className={primeiroErro(errosArea, 'longitude') ? styles.inputError : ''}
-                      />
-                      {primeiroErro(errosArea, 'longitude') && (
-                        <span className={styles.fieldError}>{primeiroErro(errosArea, 'longitude')}</span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className={styles.modalFooter}>
-                <button
-                  type="button"
-                  className={styles.cancelBtn}
-                  onClick={() => setModalAberto(false)}
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className={styles.saveBtn}
-                  disabled={salvandoArea}
-                >
-                  {salvandoArea ? 'Salvando...' : 'Criar área'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
