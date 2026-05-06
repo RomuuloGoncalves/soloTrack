@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Sidebar } from '../../Components/Sidebar/Sidebar';
-import { Target, MapPin, Tractor, Map, X } from 'lucide-react';
+import { Target, MapPin, Tractor, Map } from 'lucide-react';
 import styles from './GestaoPropriedade.module.css';
 import { useTheme } from '../../hooks/useTheme';
 import { useAutenticacao } from '../../contexts/ContextoAuth';
@@ -12,6 +12,7 @@ import propriedadeService from '../../services/propriedadeService';
 import areaPlantioService from '../../services/areaPlantioService';
 import type { Propriedade, AreaPlantio } from '../../types/types';
 import { NovaAreaSidebar } from '../../Components/NovaAreaSidebar/NovaAreaSidebar'; 
+import { ConfirmacaoModal } from '../../Components/ConfirmacaoModal/ConfirmacaoModal'; 
 
 type Erros = Record<string, string>;
 
@@ -46,12 +47,14 @@ export function GestaoPropriedade() {
 
   // --- Modal nova área ---
   const [modalAberto, setModalAberto] = useState(false);
-  const [nomeArea, setNomeArea] = useState('');
-  const [tamanhoAreaM2, setTamanhoAreaM2] = useState('');
-  const [latitudeArea, setLatitudeArea] = useState('');
-  const [longitudeArea, setLongitudeArea] = useState('');
-  const [salvandoArea, setSalvandoArea] = useState(false);
-  const [errosArea, setErrosArea] = useState<Erros>({});
+  // const [nomeArea, setNomeArea] = useState('');
+//   const [tamanhoAreaM2, setTamanhoAreaM2] = useState('');
+  // const [latitudeArea, setLatitudeArea] = useState('');
+  // const [longitudeArea, setLongitudeArea] = useState('');
+  // const [salvandoArea, setSalvandoArea] = useState(false);
+  // const [errosArea, setErrosArea] = useState<Erros>({});
+  const [modalExclusaoAberto, setModalExclusaoAberto] = useState(false);
+  const [areaIdParaExcluir, setAreaIdParaExcluir] = useState<number | null>(null);
 
   useEffect(() => {
     async function carregarPropriedade() {
@@ -173,11 +176,11 @@ export function GestaoPropriedade() {
   }
 
   function abrirModal() {
-    setNomeArea('');
-    setTamanhoAreaM2('');
-    setLatitudeArea('');
-    setLongitudeArea('');
-    setErrosArea({});
+    // setNomeArea('');
+    // setTamanhoAreaM2('');
+    // setLatitudeArea('');
+    // setLongitudeArea('');
+    // setErrosArea({});
     setModalAberto(true);
   }
 
@@ -185,46 +188,56 @@ export function GestaoPropriedade() {
     setModalAberto(false);
   }
 
-  async function handleSubmitArea(e: React.FormEvent) {
-    e.preventDefault();
-    if (!propriedadeId) return;
-    setErrosArea({});
-    setSalvandoArea(true);
-    try {
-      const payload = {
-        propriedade_id: propriedadeId,
-        nome_area: nomeArea,
-        tamanho_area_m2: tamanhoAreaM2 ? parseFloat(tamanhoAreaM2) : undefined,
-        latitude: latitudeArea ? parseFloat(latitudeArea) : undefined,
-        longitude: longitudeArea ? parseFloat(longitudeArea) : undefined,
-      };
-      const res = await areaPlantioService.criar(payload);
-      setAreas(prev => [...prev, res.data.data]);
-      setModalAberto(false);
-      showToast(res.data.message || 'Área criada!', 'success');
-    } catch (error: any) {
-      if (error.response?.status === 422) {
-        setErrosArea(extrairErros(error));
-        showToast('Corrija os erros no formulário.', 'error');
-      } else {
-        showToast(error.response?.data?.message || 'Erro ao criar área.', 'error');
-      }
-    } finally {
-      setSalvandoArea(false);
-    }
+  // async function handleSubmitArea(e: React.FormEvent) {
+  //   e.preventDefault();
+  //   if (!propriedadeId) return;
+  //   setErrosArea({});
+  //   setSalvandoArea(true);
+  //   try {
+  //     const payload = {
+  //       propriedade_id: propriedadeId,
+  //       nome_area: nomeArea,
+  //       tamanho_area_m2: tamanhoAreaM2 ? parseFloat(tamanhoAreaM2) : undefined,
+  //       latitude: latitudeArea ? parseFloat(latitudeArea) : undefined,
+  //       longitude: longitudeArea ? parseFloat(longitudeArea) : undefined,
+  //     };
+  //     const res = await areaPlantioService.criar(payload);
+  //     setAreas(prev => [...prev, res.data.data]);
+  //     setModalAberto(false);
+  //     showToast(res.data.message || 'Área criada!', 'success');
+  //   } catch (error: any) {
+  //     if (error.response?.status === 422) {
+  //       setErrosArea(extrairErros(error));
+  //       showToast('Corrija os erros no formulário.', 'error');
+  //     } else {
+  //       showToast(error.response?.data?.message || 'Erro ao criar área.', 'error');
+  //     }
+  //   } finally {
+  //     setSalvandoArea(false);
+  //   }
+  // }
+
+    function abrirModalExclusao(id: number) {
+    setAreaIdParaExcluir(id);
+    setModalExclusaoAberto(true);
   }
 
-  async function handleExcluirArea(id: number) {
-    if (!window.confirm('Tem certeza que deseja excluir esta área?')) {
-      return;
-    }
+  function fecharModalExclusao() {
+    setModalExclusaoAberto(false);
+    setAreaIdParaExcluir(null);
+  }
+
+  async function confirmarExclusaoArea() {
+    if (areaIdParaExcluir === null) return;
     
     try {
-      await areaPlantioService.deletar(id);
-      setAreas(prev => prev.filter(a => a.id !== id));
+      await areaPlantioService.deletar(areaIdParaExcluir);
+      setAreas(prev => prev.filter(a => a.id !== areaIdParaExcluir));
       showToast('Área removida com sucesso!', 'success');
     } catch {
       showToast('Erro ao remover área.', 'error');
+    } finally {
+      fecharModalExclusao();
     }
   }
 
@@ -425,7 +438,7 @@ export function GestaoPropriedade() {
                       <AreaCard
                             key={area.id}
                             area={area} 
-                            onExcluir={handleExcluirArea}
+                            onExcluir={abrirModalExclusao}
                           />
                     ))}
                   </div>
@@ -436,6 +449,131 @@ export function GestaoPropriedade() {
         )}
       </main>
 
+      {/* {modalAberto && (
+        <div className={styles.modalOverlay} onClick={() => setModalAberto(false)}>
+          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h2>Nova área de plantio</h2>
+              <button
+                className={styles.modalClose}
+                onClick={() => setModalAberto(false)}
+                aria-label="Fechar"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmitArea}>
+              <div className={styles.modalBody}>
+                <div className={styles.inputGroup}>
+                  <label>Nome da área</label>
+                  <input
+                    type="text"
+                    placeholder="Ex: Estufa Norte"
+                    value={nomeArea}
+                    onChange={e => { setNomeArea(e.target.value); setErrosArea(p => ({ ...p, nome_area: '' })); }}
+                    className={primeiroErro(errosArea, 'nome_area') ? styles.inputError : ''}
+                  />
+                  {primeiroErro(errosArea, 'nome_area') && (
+                    <span className={styles.fieldError}>{primeiroErro(errosArea, 'nome_area')}</span>
+                  )}
+                </div>
+
+                <div className={styles.inputGroup}>
+                  <label>Tamanho (m²)</label>
+                  <input
+                    type="number"
+                    placeholder="Ex: 250"
+                    step="0.01"
+                    value={tamanhoAreaM2}
+                    onChange={e => { setTamanhoAreaM2(e.target.value); setErrosArea(p => ({ ...p, tamanho_area_m2: '' })); }}
+                    className={primeiroErro(errosArea, 'tamanho_area_m2') ? styles.inputError : ''}
+                  />
+                  {primeiroErro(errosArea, 'tamanho_area_m2') && (
+                    <span className={styles.fieldError}>{primeiroErro(errosArea, 'tamanho_area_m2')}</span>
+                  )}
+                </div>
+
+                <div className={styles.geoSection}>
+                  <div className={styles.geoHeader}>
+                    <div className={styles.geoTitle}>
+                      <MapPin size={20} />
+                      <div>
+                        <h3>Localização Geográfica</h3>
+                        <p>Coordenadas centrais da área</p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      className={styles.captureBtn}
+                      onClick={() => capturarLocalizacao(setLatitudeArea, setLongitudeArea)}
+                    >
+                      <Target size={16} /> Capturar atual
+                    </button>
+                  </div>
+
+                  <div className={styles.row}>
+                    <div className={styles.inputGroup}>
+                      <label>Latitude</label>
+                      <input
+                        type="text"
+                        placeholder="Ex: -23.550529"
+                        value={latitudeArea}
+                        onChange={e => { setLatitudeArea(e.target.value); setErrosArea(p => ({ ...p, latitude: '' })); }}
+                        className={primeiroErro(errosArea, 'latitude') ? styles.inputError : ''}
+                      />
+                      {primeiroErro(errosArea, 'latitude') && (
+                        <span className={styles.fieldError}>{primeiroErro(errosArea, 'latitude')}</span>
+                      )}
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label>Longitude</label>
+                      <input
+                        type="text"
+                        placeholder="Ex: -46.633308"
+                        value={longitudeArea}
+                        onChange={e => { setLongitudeArea(e.target.value); setErrosArea(p => ({ ...p, longitude: '' })); }}
+                        className={primeiroErro(errosArea, 'longitude') ? styles.inputError : ''}
+                      />
+                      {primeiroErro(errosArea, 'longitude') && (
+                        <span className={styles.fieldError}>{primeiroErro(errosArea, 'longitude')}</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.modalFooter}>
+                <button
+                  type="button"
+                  className={styles.cancelBtn}
+                  onClick={() => setModalAberto(false)}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className={styles.saveBtn}
+                  disabled={salvandoArea}
+                >
+                  {salvandoArea ? 'Salvando...' : 'Criar área'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )} */}
+      <ConfirmacaoModal 
+        isOpen={modalExclusaoAberto}
+        onClose={fecharModalExclusao}
+        onConfirm={confirmarExclusaoArea}
+        title="Tem certeza que deseja excluir?"
+        message="Tem certeza de que deseja excluir este item? Esta ação não pode ser desfeita."
+        confirmText="Excluir"
+        cancelText="Cancelar"
+        type="delete" 
+      />
+    
     </div>
   );
 }

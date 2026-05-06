@@ -1,4 +1,4 @@
-import { Map, Sprout, Trash2 } from 'lucide-react';
+import { Pencil, Sprout, Trash2 } from 'lucide-react';
 import styles from './AreaCard.module.css';
 import { useNavigate } from 'react-router-dom';
 import type { AreaPlantio } from '../../types/types';
@@ -31,7 +31,7 @@ export function AreaCard({ area, cultura, onExcluir }: AreaCardProps) {
         
         <div className={styles.cardTopActions}>
           <div className={styles.mapIconCircle}>
-            <Map size={20} color="#58C411" />
+            <Pencil size={20} color="#58C411" />
           </div>
           
           {onExcluir && (
