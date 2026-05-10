@@ -1,0 +1,51 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6",
+		"name": "SoloTrack - IoT",
+		"description": "Simulação de requisições do Hardware para o Backend Laravel",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Disparar Leituras (Simular ESP32)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"mac_address\": \"A1:B2:C3:D4:E5:F6\",\n  \"qr_code_hash\": \"abc123xyz\",\n  \"leituras\": [\n    {\n      \"tipo_sensor_id\": 1,\n      \"valor\": 45.2\n    },\n    {\n      \"tipo_sensor_id\": 2,\n      \"valor\": 18.7\n    },\n    {\n      \"tipo_sensor_id\": 4,\n      \"valor\": 62.1\n    }\n  ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/iot/leituras",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"iot",
+						"leituras"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

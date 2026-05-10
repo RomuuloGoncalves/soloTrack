@@ -49,6 +49,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/mcp/chat', [ChatController::class, 'chat']);
 });
 
+// --- Integração com IoT (Arduino / ESP32) ---
+// Rota pública para os hardwares. A segurança é feita pela exigência de um MAC Address registrado.
+Route::post('/iot/leituras', [LeituraController::class, 'receberDadosIot']);
+
 
 // --- Utilitários de Sistema (Uso Interno) ---
 Route::prefix('internal')->group(function () {

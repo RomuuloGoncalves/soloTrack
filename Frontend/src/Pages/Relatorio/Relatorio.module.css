@@ -30,8 +30,9 @@
 
 .pageLayout {
   display: flex;
-  width: 100vw;
-  min-height: 100dvh;
+  width: 100%;
+  overflow-x: hidden;
+  min-height: 100vh;
   background-color: var(--bg-color);
   font-family: 'Outfit', sans-serif;
   transition: background-color 0.3s ease;
