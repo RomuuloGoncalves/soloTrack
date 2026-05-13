@@ -27,7 +27,7 @@ class PropriedadeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StorePropriedadeRequest $request)
     {
         $validated = $request->validated();
         $usuarioId = $request->input('usuario_id');
@@ -64,7 +64,7 @@ class PropriedadeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdatePropriedadeRequest $request, string $id)
     {
         $propriedade = Propriedade::find($id);
         if (!$propriedade) {

@@ -542,6 +542,16 @@ export interface components {
             unidade_medida: string;
             preco_pago: number;
         };
+        /** StorePropriedadeRequest */
+        StorePropriedadeRequest: {
+            nome: string;
+            cidade?: string | null;
+            estado?: string | null;
+            latitude?: number | null;
+            longitude?: number | null;
+            tamanho_hectares?: number | null;
+            usuario_id?: number | null;
+        };
         /** StoreUsuarioRequest */
         StoreUsuarioRequest: {
             nome: string;
@@ -556,6 +566,15 @@ export interface components {
             tamanho_area_m2?: number | null;
             latitude?: number | null;
             longitude?: number | null;
+        };
+        /** UpdatePropriedadeRequest */
+        UpdatePropriedadeRequest: {
+            nome?: string;
+            cidade?: string | null;
+            estado?: string | null;
+            latitude?: number | null;
+            longitude?: number | null;
+            tamanho_hectares?: number | null;
         };
         /** Usuario */
         Usuario: {
@@ -1517,7 +1536,11 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StorePropriedadeRequest"];
+            };
+        };
         responses: {
             201: {
                 headers: {
@@ -1533,6 +1556,7 @@ export interface operations {
                 };
             };
             401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
         };
     };
     "propriedades.show": {
@@ -1584,7 +1608,11 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["UpdatePropriedadeRequest"];
+            };
+        };
         responses: {
             200: {
                 headers: {
@@ -1613,6 +1641,7 @@ export interface operations {
                     };
                 };
             };
+            422: components["responses"]["ValidationException"];
         };
     };
     "propriedades.destroy": {

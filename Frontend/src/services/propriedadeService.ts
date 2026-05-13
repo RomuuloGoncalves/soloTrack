@@ -1,6 +1,6 @@
 import api from './api';
 import type { AxiosPromise } from 'axios';
-import type { Propriedade } from '../types/types';
+import type { Propriedade, StorePropriedadeRequest, UpdatePropriedadeRequest } from '../types/types';
 
 interface PropriedadeResponse {
   success: boolean;
@@ -19,11 +19,11 @@ const propriedadeService = {
     return api.get('/propriedades');
   },
 
-  criar: (dados: Propriedade): AxiosPromise<PropriedadeResponse> => {
+  criar: (dados: StorePropriedadeRequest): AxiosPromise<PropriedadeResponse> => {
     return api.post('/propriedades', dados);
   },
 
-  atualizar: (id: number, dados: Propriedade): AxiosPromise<PropriedadeResponse> => {
+  atualizar: (id: number, dados: UpdatePropriedadeRequest): AxiosPromise<PropriedadeResponse> => {
     return api.put(`/propriedades/${id}`, dados);
   },
 
