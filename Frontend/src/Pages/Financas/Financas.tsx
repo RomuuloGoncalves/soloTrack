@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Sidebar } from '../../Components/Sidebar/Sidebar';
+import { Sidebar } from '../../components/Sidebar/Sidebar.tsx';
 import { Pencil, Trash2, X } from 'lucide-react';
 import styles from './Financas.module.css';
 import { useTheme } from '../../hooks/useTheme';

@@ -5,7 +5,7 @@ import {
   BarChart, Bar
 } from 'recharts';
 import styles from './VisaoGeral.module.css';
-import { Sidebar } from '../../Components/Sidebar/Sidebar';
+import { Sidebar } from '../../components/Sidebar/Sidebar';
 import lightLogo from '../../assets/images/Light-logo.svg';
 import darkLogo from '../../assets/images/Dark-Logo.svg';
 import { useTheme } from '../../hooks/useTheme';

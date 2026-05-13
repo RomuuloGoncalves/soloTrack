@@ -6,7 +6,7 @@ import {
   Warehouse, Sprout, Thermometer, Droplets,
   Droplet, Filter, Pipette, ChevronLeft, ChevronRight
 } from 'lucide-react';
-import { Sidebar } from '../../Components/Sidebar/Sidebar';
+import { Sidebar } from '../../components/Sidebar/Sidebar';
 import styles from './Relatorio.module.css';
 import { useTheme } from '../../hooks/useTheme';
 import api from '../../services/api';

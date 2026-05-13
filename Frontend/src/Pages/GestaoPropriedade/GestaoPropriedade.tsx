@@ -1,18 +1,18 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Sidebar } from '../../Components/Sidebar/Sidebar';
+import { Sidebar } from '../../components/Sidebar/Sidebar';
 import { Target, MapPin, Tractor, Map } from 'lucide-react';
 import styles from './GestaoPropriedade.module.css';
 import { useTheme } from '../../hooks/useTheme';
 import { useAutenticacao } from '../../contexts/ContextoAuth';
 import lightLogo from '../../assets/images/Light-logo.svg';
 import darkLogo from '../../assets/images/Dark-Logo.svg';
-import { AreaCard } from '../../Components/AreaCard/AreaCard';
+import { AreaCard } from '../../components/AreaCard/AreaCard';
 import { useToast } from '../../contexts/ToastContext';
 import propriedadeService from '../../services/propriedadeService';
 import areaPlantioService from '../../services/areaPlantioService';
 import type { Propriedade, AreaPlantio } from '../../types/types';
-import { NovaAreaSidebar } from '../../Components/NovaAreaSidebar/NovaAreaSidebar'; 
-import { ConfirmacaoModal } from '../../Components/ConfirmacaoModal/ConfirmacaoModal'; 
+import { NovaAreaSidebar } from '../../components/NovaAreaSidebar/NovaAreaSidebar'; 
+import { ConfirmacaoModal } from '../../components/ConfirmacaoModal/ConfirmacaoModal'; 
 
 type Erros = Record<string, string>;
 

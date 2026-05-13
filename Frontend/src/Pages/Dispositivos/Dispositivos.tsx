@@ -1,11 +1,11 @@
 import { useTheme } from "../../hooks/useTheme";
 import { useState, useMemo } from "react";
-import { Sidebar } from "../../Components/Sidebar/Sidebar";
+import { Sidebar } from "../../components/Sidebar/Sidebar";
 import darkLogo from "../../assets/images/Dark-Logo.svg";
 import lightLogo from "../../assets/images/Light-logo.svg";
 import styles from "./Dispositivos.module.css";
 import { Plus, Search, Cpu, Activity, Wifi } from "lucide-react";
-import Accordion, { type Dispositivo } from "../../Components/Accordion/Accordion";
+import Accordion, { type Dispositivo } from "../../components/Accordion/Accordion";
 
 function Dispositivos() {
   const { theme } = useTheme();
