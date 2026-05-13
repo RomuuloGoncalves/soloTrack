@@ -6,10 +6,26 @@ import {
   Warehouse, Sprout, Thermometer, Droplets,
   Droplet, Filter, Pipette, ChevronLeft, ChevronRight
 } from 'lucide-react';
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import { Sidebar } from '../../components/Sidebar/Sidebar';
 import styles from './Relatorio.module.css';
 import { useTheme } from '../../hooks/useTheme';
 import api from '../../services/api';
+
+interface RelatorioRow {
+  id: string;
+  date: string;
+  time: string;
+  origin: string;
+  cultura: string;
+  temp: string;
+  humAir: string;
+  humSoil: string;
+  ph: string;
+  status: string;
+}
 
 export function Relatorio() {
   const { theme } = useTheme();
@@ -17,7 +33,7 @@ export function Relatorio() {
 
   const logo = useMemo(() => theme === 'dark' ? darkLogo : lightLogo, [theme]);
 
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<RelatorioRow[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Estados dos filtros
@@ -75,6 +91,85 @@ export function Relatorio() {
     return filteredData.slice(start, start + itemsPerPage);
   }, [filteredData, currentPage]);
 
+  const exportRows = useMemo(() => {
+    return filteredData.map((row) => ({
+      'ID Leitura': row.id,
+      'Data': row.date,
+      'Hora': row.time,
+      'Estufa': row.origin,
+      'Cultura': row.cultura,
+      'Temperatura': row.temp,
+      'Umid. Ar': row.humAir,
+      'Umid. Solo': row.humSoil,
+      'pH': row.ph,
+      'Status': row.status,
+    }));
+  }, [filteredData]);
+
+  const reportTimestamp = () => {
+    const now = new Date();
+    const datePart = now.toISOString().split('T')[0];
+    const timePart = now.toTimeString().slice(0, 8).replace(/:/g, '-');
+    return `${datePart}_${timePart}`;
+  };
+
+  const handleExportExcel = () => {
+    if (exportRows.length === 0) {
+      return;
+    }
+
+    const worksheet = XLSX.utils.json_to_sheet(exportRows);
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Relatorio');
+    XLSX.writeFile(workbook, `relatorio_${reportTimestamp()}.xlsx`);
+  };
+
+  const handleExportPdf = () => {
+    if (exportRows.length === 0) {
+      return;
+    }
+
+    const doc = new jsPDF({ orientation: 'landscape' });
+
+    doc.setFontSize(14);
+    doc.text('Relatorio SoloTrack', 14, 14);
+
+    autoTable(doc, {
+      startY: 20,
+      head: [[
+        'ID Leitura',
+        'Data',
+        'Hora',
+        'Estufa',
+        'Cultura',
+        'Temperatura',
+        'Umid. Ar',
+        'Umid. Solo',
+        'pH',
+        'Status',
+      ]],
+      body: exportRows.map((row) => [
+        row['ID Leitura'],
+        row.Data,
+        row.Hora,
+        row.Estufa,
+        row.Cultura,
+        row.Temperatura,
+        row['Umid. Ar'],
+        row['Umid. Solo'],
+        row.pH,
+        row.Status,
+      ]),
+      styles: { fontSize: 8 },
+      headStyles: { fillColor: [88, 196, 17] },
+      margin: { left: 8, right: 8 },
+      tableWidth: 'auto',
+    });
+
+    doc.save(`relatorio_${reportTimestamp()}.pdf`);
+  };
+
   return (
     <div className={styles.pageLayout}>
       <Sidebar 
@@ -91,10 +186,20 @@ export function Relatorio() {
             <p>Consulte o histórico bruto de todas as leituras e exporte laudos.</p>
           </div>
           <div className={styles.actions}>
-            <button className={styles.exportCsv}>
+            <button
+              className={styles.exportCsv}
+              onClick={handleExportExcel}
+              disabled={loading || exportRows.length === 0}
+              title={exportRows.length === 0 ? 'Nao ha dados para exportar' : 'Exportar em Excel'}
+            >
               <Download size={18} /> Exportar CSV/ Excel
             </button>
-            <button className={styles.exportPdf}>
+            <button
+              className={styles.exportPdf}
+              onClick={handleExportPdf}
+              disabled={loading || exportRows.length === 0}
+              title={exportRows.length === 0 ? 'Nao ha dados para exportar' : 'Exportar em PDF'}
+            >
               <FileText size={18} /> Exportar Laudo em PDF
             </button>
           </div>

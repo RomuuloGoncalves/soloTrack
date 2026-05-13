@@ -94,6 +94,12 @@
   color: #FFFFFF;
 }
 
+.exportCsv:disabled,
+.exportPdf:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .contentCard {
   background: var(--card-bg);
   border-radius: 12px;
