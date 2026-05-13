@@ -16,6 +16,7 @@ export type UpdateAreaPlantioRequest = components['schemas']['UpdateAreaPlantioR
 export type Equipamento = components['schemas']['Equipamento'];
 export type Cultura      = components['schemas']['Cultura'];
 export type Insumo       = components['schemas']['Insumo'];
+export type StoreInsumoRequest = components['schemas']['StoreInsumoRequest'];
 
 export type LoginPayload    = operations['auth.login']['requestBody']['content']['application/json'];
 export type LoginResponse   = operations['auth.login']['responses']['200']['content']['application/json'];

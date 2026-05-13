@@ -7,7 +7,8 @@ import { useToast } from '../../contexts/ToastContext';
 import lightLogo from '../../assets/images/Light-logo.svg';
 import darkLogo from '../../assets/images/Dark-Logo.svg';
 import insumoService from '../../services/insumoService.ts';
-import type { Insumo } from '../../types/types';
+import type { InsumoFinanceiro } from '../../services/insumoService';
+import type { StoreInsumoRequest } from '../../types/types';
 
 type Erros = Record<string, string>;
 
@@ -22,7 +23,7 @@ export function Financas() {
   const logo = useMemo(() => (theme === 'dark' ? darkLogo : lightLogo), [theme]);
 
   // --- Insumos state ---
-  const [insumos, setInsumos] = useState<Insumo[]>([]);
+  const [insumos, setInsumos] = useState<InsumoFinanceiro[]>([]);
   const [loadingInsumos, setLoadingInsumos] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -36,7 +37,7 @@ export function Financas() {
 
   // --- Modal state ---
   const [modalAberto, setModalAberto] = useState(false);
-  const [editandoInsumo, setEditandoInsumo] = useState<Insumo | null>(null);
+  const [editandoInsumo, setEditandoInsumo] = useState<InsumoFinanceiro | null>(null);
   const [salvando, setSalvando] = useState(false);
   const [erros, setErros] = useState<Erros>({});
 
@@ -55,10 +56,10 @@ export function Financas() {
     setLoadingInsumos(true);
     try {
       const res = await insumoService.listar(page, perPage);
-      setInsumos(res.data.data);
-      setCurrentPage(res.data.current_page);
-      setTotalPages(res.data.last_page);
-      setTotal(res.data.total);
+      setInsumos(res.data.data.data ?? []);
+      setCurrentPage(res.data.data.current_page ?? 1);
+      setTotalPages(res.data.data.last_page ?? 1);
+      setTotal(res.data.data.total ?? 0);
     } catch {
       showToast('Erro ao carregar insumos.', 'error');
     } finally {
@@ -69,9 +70,9 @@ export function Financas() {
   async function carregarResumo() {
     try {
       const res = await insumoService.resumo();
-      setPatrimonio(res.data.patrimonio_total);
-      setTiposCount(res.data.tipos_de_insumos);
-      setEconomiaPercent(res.data.economia_estimada);
+      setPatrimonio(res.data.data.patrimonio_total ?? 0);
+      setTiposCount(res.data.data.tipos_de_insumos ?? 0);
+      setEconomiaPercent(res.data.data.economia_estimada ?? 0);
     } catch {
       // silencioso — cards mostram zero se falhar
     }
@@ -99,9 +100,10 @@ export function Financas() {
     setModalAberto(true);
   }
 
-  function abrirModalEdicao(insumo: Insumo) {
+  function abrirModalEdicao(insumo: InsumoFinanceiro) {
     setEditandoInsumo(insumo);
     setNome(insumo.nome_fertilizante);
+    setQuantidade(String(insumo.quantidade ?? ''));
     setUnidade(insumo.unidade_medida);
     setPrecoUnitario(String(insumo.preco_pago));
     setErros({});
@@ -113,24 +115,25 @@ export function Financas() {
     setErros({});
     setSalvando(true);
     try {
-      const payload = {
+      const payload: StoreInsumoRequest = {
         nome_fertilizante: nome,
         quantidade: parseFloat(quantidade),
         unidade_medida: unidade,
-        preco_unitario: parseFloat(precoUnitario),
-      }as any;
+        preco_pago: parseFloat(precoUnitario),
+      };
 
       if (editandoInsumo) {
         const res = await insumoService.atualizar(editandoInsumo.id, payload);
-        setInsumos(prev => prev.map(i => (i.id === editandoInsumo.id ? res.data : i)));
+        setInsumos(prev => prev.map(i => (i.id === editandoInsumo.id ? res.data.data : i)));
         showToast('Insumo atualizado com sucesso!', 'success');
       } else {
         const res = await insumoService.criar(payload);
-        setInsumos(prev => [...prev, res.data]);
+        setInsumos(prev => [res.data.data, ...prev]);
         showToast('Insumo criado com sucesso!', 'success');
       }
 
       setModalAberto(false);
+      carregarInsumos(currentPage);
       carregarResumo();
     } catch (error: any) {
       if (error.response?.status === 422) {
@@ -150,6 +153,7 @@ export function Financas() {
       await insumoService.excluir(id);
       setInsumos(prev => prev.filter(i => i.id !== id));
       showToast('Insumo excluído com sucesso!', 'success');
+      carregarInsumos(currentPage);
       carregarResumo();
     } catch {
       showToast('Erro ao excluir insumo.', 'error');
@@ -246,10 +250,10 @@ export function Financas() {
                     insumos.map(insumo => (
                       <tr key={insumo.id}>
                         <td className={styles.tdNome}>{insumo.nome_fertilizante}</td>
-                        <td>{(insumo as any).quantidade}</td>
+                        <td>{insumo.quantidade}</td>
                         <td>{insumo.unidade_medida}</td>
-                        <td>{insumo.preco_pago ? fmt(parseFloat(insumo.preco_pago)) : '-'}</td>
-                        <td>{fmt(((insumo as any).valor_total) ?? 0)}</td>
+                        <td>{insumo.preco_pago ? fmt(parseFloat(String(insumo.preco_pago))) : '-'}</td>
+                        <td>{fmt(Number(insumo.valor_total ?? 0))}</td>
                         <td className={styles.tdActions}>
                           <button
                             className={styles.actionBtn}
@@ -338,16 +342,16 @@ export function Financas() {
                   placeholder="Digite um nome..."
                   value={nome}
                   onChange={e => { setNome(e.target.value); setErros(p => ({ ...p, nome: '' })); }}
-                  className={primeiroErro(erros, 'nome') ? styles.inputError : ''}
+                  className={primeiroErro(erros, 'nome_fertilizante') ? styles.inputError : ''}
                 />
-                {primeiroErro(erros, 'nome') && (
-                  <span className={styles.fieldError}>{primeiroErro(erros, 'nome')}</span>
+                {primeiroErro(erros, 'nome_fertilizante') && (
+                  <span className={styles.fieldError}>{primeiroErro(erros, 'nome_fertilizante')}</span>
                 )}
               </div>
 
               <div className={styles.inputGroup}>
                 <label>Valor unitário</label>
-                <div className={`${styles.inputPrefix} ${primeiroErro(erros, 'preco_unitario') ? styles.inputPrefixError : ''}`}>
+                <div className={`${styles.inputPrefix} ${primeiroErro(erros, 'preco_pago') ? styles.inputPrefixError : ''}`}>
                   <span>R$</span>
                   <input
                     type="number"
@@ -355,11 +359,11 @@ export function Financas() {
                     step="0.01"
                     placeholder="0,00"
                     value={precoUnitario}
-                    onChange={e => { setPrecoUnitario(e.target.value); setErros(p => ({ ...p, preco_unitario: '' })); }}
+                    onChange={e => { setPrecoUnitario(e.target.value); setErros(p => ({ ...p, preco_pago: '' })); }}
                   />
                 </div>
-                {primeiroErro(erros, 'preco_unitario') && (
-                  <span className={styles.fieldError}>{primeiroErro(erros, 'preco_unitario')}</span>
+                {primeiroErro(erros, 'preco_pago') && (
+                  <span className={styles.fieldError}>{primeiroErro(erros, 'preco_pago')}</span>
                 )}
               </div>
 
@@ -369,11 +373,11 @@ export function Financas() {
                   type="text"
                   placeholder="Digite a unidade de medida..."
                   value={unidade}
-                  onChange={e => { setUnidade(e.target.value); setErros(p => ({ ...p, unidade: '' })); }}
-                  className={primeiroErro(erros, 'unidade') ? styles.inputError : ''}
+                  onChange={e => { setUnidade(e.target.value); setErros(p => ({ ...p, unidade_medida: '' })); }}
+                  className={primeiroErro(erros, 'unidade_medida') ? styles.inputError : ''}
                 />
-                {primeiroErro(erros, 'unidade') && (
-                  <span className={styles.fieldError}>{primeiroErro(erros, 'unidade')}</span>
+                {primeiroErro(erros, 'unidade_medida') && (
+                  <span className={styles.fieldError}>{primeiroErro(erros, 'unidade_medida')}</span>
                 )}
               </div>
 

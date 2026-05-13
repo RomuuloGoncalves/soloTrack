@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('usuario_id')->constrained()->onDelete('cascade');
             $table->string('nome_fertilizante');
+            $table->decimal('quantidade', 10, 2)->default(0);
             $table->decimal('preco_pago', 10, 2)->nullable();
             $table->string('unidade_medida');
             $table->timestamps();

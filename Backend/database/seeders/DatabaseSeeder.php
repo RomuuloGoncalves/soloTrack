@@ -12,6 +12,7 @@ use App\Models\AreaPlantio;
 use App\Models\TipoSensor;
 use App\Models\Equipamento;
 use App\Models\Leitura;
+use App\Models\Insumo;
 use Carbon\Carbon;
 
 class DatabaseSeeder extends Seeder
@@ -22,30 +23,44 @@ class DatabaseSeeder extends Seeder
     public function run(): void
 
     {
+        $now = now();
+
+        // Recria o conjunto de dados de demonstração sem duplicar registros.
+        DB::table('leituras')->delete();
+
         // 1. Criar Usuário Base
-        $user = Usuario::create([
-            'nome' => 'usuario',
-            'email' => 'a@a.a',
-            'password' => bcrypt('asdasdasd'),
-            'email_verified_at' => now(),
-        ]);
+        $user = Usuario::updateOrCreate(
+            ['email' => 'a@a.a'],
+            [
+                'nome' => 'usuario',
+                'password' => bcrypt('asdasdasd'),
+                'email_verified_at' => $now,
+            ]
+        );
 
         // 2. Criar Propriedade
-        $propriedade = Propriedade::create([
-            'nome'             => 'Fazenda SoloTrack',
-            'tamanho_hectares' => 150,
-            'cidade'           => 'Sorocaba',
-            'estado'           => 'SP',
-            'latitude'         => '-23.550529',
-            'longitude'        => '-46.633308',
-        ]);
+        $propriedade = Propriedade::updateOrCreate(
+            ['nome' => 'Fazenda SoloTrack'],
+            [
+                'tamanho_hectares' => 150,
+                'cidade'           => 'Sorocaba',
+                'estado'           => 'SP',
+                'latitude'         => '-23.550529',
+                'longitude'        => '-46.633308',
+            ]
+        );
 
-        DB::table('propriedade_user')->insert([
-            'usuario_id'     => $user->id, 
-            'propriedade_id' => $propriedade->id,
-            'created_at'     => now(),
-            'updated_at'     => now(),
-        ]);
+        DB::table('propriedade_user')->updateOrInsert(
+            [
+                'usuario_id'     => $user->id,
+                'propriedade_id' => $propriedade->id,
+            ],
+            [
+                'nivel_acesso' => 'admin',
+                'created_at'   => $now,
+                'updated_at'   => $now,
+            ]
+        );
 
         // 3. Criar Áreas de Plantio
         $areas = [
@@ -77,52 +92,174 @@ class DatabaseSeeder extends Seeder
 
         $areasCriadas = [];
         foreach ($areas as $area) {
-            $areasCriadas[] = AreaPlantio::create($area);
+            $areasCriadas[] = AreaPlantio::updateOrCreate(
+                [
+                    'propriedade_id' => $area['propriedade_id'],
+                    'nome_area'      => $area['nome_area'],
+                ],
+                $area
+            );
+        }
+
+        // 3.1 Criar insumos para a tela de Finanças (todos vinculados ao usuário base)
+        $insumos = [
+            [
+                'usuario_id' => $user->id,
+                'nome_fertilizante' => 'NPK 10-10-10',
+                'preco_pago' => 145.90,
+                'unidade_medida' => 'saco',
+                'quantidade' => 12,
+            ],
+            [
+                'usuario_id' => $user->id,
+                'nome_fertilizante' => 'Calcário Dolomítico',
+                'preco_pago' => 52.50,
+                'unidade_medida' => 'saco',
+                'quantidade' => 30,
+            ],
+            [
+                'usuario_id' => $user->id,
+                'nome_fertilizante' => 'Ureia Agrícola',
+                'preco_pago' => 178.40,
+                'unidade_medida' => 'saco',
+                'quantidade' => 8,
+            ],
+            [
+                'usuario_id' => $user->id,
+                'nome_fertilizante' => 'Adubo Orgânico',
+                'preco_pago' => 39.90,
+                'unidade_medida' => 'kg',
+                'quantidade' => 120,
+            ],
+            [
+                'usuario_id' => $user->id,
+                'nome_fertilizante' => 'Fertilizante Foliar',
+                'preco_pago' => 84.75,
+                'unidade_medida' => 'litro',
+                'quantidade' => 25,
+            ],
+        ];
+
+        $insumosCriados = [];
+        foreach ($insumos as $dadosInsumo) {
+            $insumosCriados[] = Insumo::updateOrCreate(
+                [
+                    'usuario_id' => $dadosInsumo['usuario_id'],
+                    'nome_fertilizante' => $dadosInsumo['nome_fertilizante'],
+                ],
+                $dadosInsumo
+            );
+        }
+
+        foreach ([
+            [
+                'area_plantio_id' => $areasCriadas[0]->id,
+                'insumo_id' => $insumosCriados[0]->id,
+                'quantidade_padrao' => 2.5,
+            ],
+            [
+                'area_plantio_id' => $areasCriadas[1]->id,
+                'insumo_id' => $insumosCriados[2]->id,
+                'quantidade_padrao' => 1.8,
+            ],
+            [
+                'area_plantio_id' => $areasCriadas[2]->id,
+                'insumo_id' => $insumosCriados[1]->id,
+                'quantidade_padrao' => 3.2,
+            ],
+            [
+                'area_plantio_id' => $areasCriadas[0]->id,
+                'insumo_id' => $insumosCriados[4]->id,
+                'quantidade_padrao' => 0.8,
+            ],
+        ] as $vinculoInsumo) {
+            DB::table('area_insumo')->updateOrInsert(
+                [
+                    'area_plantio_id' => $vinculoInsumo['area_plantio_id'],
+                    'insumo_id' => $vinculoInsumo['insumo_id'],
+                ],
+                [
+                    'quantidade_padrao' => $vinculoInsumo['quantidade_padrao'],
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ]
+            );
         }
 
         // 4. Criar Tipos de Sensores
-        $sensorTemp = TipoSensor::create(['grandeza' => 'Temperatura', 'unidade_medida' => '°C']);
-        $sensorUmidAr = TipoSensor::create(['grandeza' => 'Umidade do Ar', 'unidade_medida' => '%']);
-        $sensorUmidSolo = TipoSensor::create(['grandeza' => 'Umidade do Solo', 'unidade_medida' => '%']);
-        $sensorPh = TipoSensor::create(['grandeza' => 'pH', 'unidade_medida' => '']);
+        $sensorTemp = $this->upsertTipoSensor('Temperatura', '°C', $now);
+        $sensorUmidAr = $this->upsertTipoSensor('Umidade do Ar', '%', $now);
+        $sensorUmidSolo = $this->upsertTipoSensor('Umidade do Solo', '%', $now);
+        $sensorPh = $this->upsertTipoSensor('pH', '', $now);
         $sensores = [$sensorTemp, $sensorUmidAr, $sensorUmidSolo, $sensorPh];
 
         // 4.1 Criar Culturas
-        $culturaMorango = \App\Models\Cultura::create(['nome_cultura' => 'Morango']);
-        $culturaTomate = \App\Models\Cultura::create(['nome_cultura' => 'Tomate']);
-        $culturaMilho = \App\Models\Cultura::create(['nome_cultura' => 'Milho']);
+        $culturaMorango = $this->upsertCultura('Morango', $now);
+        $culturaTomate = $this->upsertCultura('Tomate', $now);
+        $culturaMilho = $this->upsertCultura('Milho', $now);
 
         // 4.2 Relacionar Culturas com Áreas (area_cultura)
-        DB::table('area_cultura')->insert([
-            ['area_plantio_id' => $areasCriadas[0]->id, 'cultura_id' => $culturaMorango->id, 'data_plantio' => Carbon::now()->subDays(30), 'data_colheita' => null],
-            ['area_plantio_id' => $areasCriadas[1]->id, 'cultura_id' => $culturaTomate->id, 'data_plantio' => Carbon::now()->subDays(45), 'data_colheita' => null],
-            ['area_plantio_id' => $areasCriadas[2]->id, 'cultura_id' => $culturaMilho->id, 'data_plantio' => Carbon::now()->subDays(60), 'data_colheita' => null],
-        ]);
+        DB::table('area_cultura')->updateOrInsert(
+            ['area_plantio_id' => $areasCriadas[0]->id, 'cultura_id' => $culturaMorango->id],
+            ['data_plantio' => Carbon::now()->subDays(30), 'data_colheita' => null, 'created_at' => $now, 'updated_at' => $now]
+        );
+        DB::table('area_cultura')->updateOrInsert(
+            ['area_plantio_id' => $areasCriadas[1]->id, 'cultura_id' => $culturaTomate->id],
+            ['data_plantio' => Carbon::now()->subDays(45), 'data_colheita' => null, 'created_at' => $now, 'updated_at' => $now]
+        );
+        DB::table('area_cultura')->updateOrInsert(
+            ['area_plantio_id' => $areasCriadas[2]->id, 'cultura_id' => $culturaMilho->id],
+            ['data_plantio' => Carbon::now()->subDays(60), 'data_colheita' => null, 'created_at' => $now, 'updated_at' => $now]
+        );
 
         // 4.3 Vincular Parâmetros Ideais (cultura_parametros)
         // Tomate Ideal: Temp (20 a 30), Umidade Solo (60 a 80), pH (6.0 a 6.8)
-        DB::table('cultura_parametros')->insert([
+        $parametros = [
             ['cultura_id' => $culturaTomate->id, 'tipo_sensor_id' => $sensorTemp->id, 'valor_minimo' => 20.0, 'valor_maximo' => 30.0],
             ['cultura_id' => $culturaTomate->id, 'tipo_sensor_id' => $sensorUmidSolo->id, 'valor_minimo' => 60.0, 'valor_maximo' => 80.0],
             ['cultura_id' => $culturaTomate->id, 'tipo_sensor_id' => $sensorPh->id, 'valor_minimo' => 6.0, 'valor_maximo' => 6.8],
-            
-            // Morango Ideal: Temp (15 a 25), Umidade Solo (65 a 85), pH (5.5 a 6.5)
             ['cultura_id' => $culturaMorango->id, 'tipo_sensor_id' => $sensorTemp->id, 'valor_minimo' => 15.0, 'valor_maximo' => 25.0],
             ['cultura_id' => $culturaMorango->id, 'tipo_sensor_id' => $sensorUmidSolo->id, 'valor_minimo' => 65.0, 'valor_maximo' => 85.0],
             ['cultura_id' => $culturaMorango->id, 'tipo_sensor_id' => $sensorPh->id, 'valor_minimo' => 5.5, 'valor_maximo' => 6.5],
-
-            // Milho Ideal: Temp (25 a 35), Umidade Solo (50 a 70), pH (5.8 a 7.0)
             ['cultura_id' => $culturaMilho->id, 'tipo_sensor_id' => $sensorTemp->id, 'valor_minimo' => 25.0, 'valor_maximo' => 35.0],
             ['cultura_id' => $culturaMilho->id, 'tipo_sensor_id' => $sensorUmidSolo->id, 'valor_minimo' => 50.0, 'valor_maximo' => 70.0],
             ['cultura_id' => $culturaMilho->id, 'tipo_sensor_id' => $sensorPh->id, 'valor_minimo' => 5.8, 'valor_maximo' => 7.0],
-        ]);
+        ];
+
+        foreach ($parametros as $parametro) {
+            DB::table('cultura_parametros')->updateOrInsert(
+                ['cultura_id' => $parametro['cultura_id'], 'tipo_sensor_id' => $parametro['tipo_sensor_id']],
+                [
+                    'valor_minimo' => $parametro['valor_minimo'],
+                    'valor_maximo' => $parametro['valor_maximo'],
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ]
+            );
+        }
 
         // 5. Criar Equipamentos
-        $equipamento = Equipamento::create([
-            'usuario_id' => $user->id,
-            'mac_address' => 'A1:B2:C3:D4:E5:F6',
-            'nome_apelido' => 'Bastão Principal SoloTrack',
-        ]);
+        $equipamento = Equipamento::updateOrCreate(
+            [
+                'usuario_id' => $user->id,
+                'mac_address' => 'A1:B2:C3:D4:E5:F6',
+            ],
+            [
+                'nome_apelido' => 'Bastão Principal SoloTrack',
+            ]
+        );
+
+        foreach ([
+            ['tipo_sensor_id' => $sensorTemp->id, 'porta_conexao' => 1],
+            ['tipo_sensor_id' => $sensorUmidAr->id, 'porta_conexao' => 2],
+            ['tipo_sensor_id' => $sensorUmidSolo->id, 'porta_conexao' => 3],
+            ['tipo_sensor_id' => $sensorPh->id, 'porta_conexao' => 4],
+        ] as $sensorEquip) {
+            DB::table('equipamento_sensor')->updateOrInsert(
+                ['equipamento_id' => $equipamento->id, 'tipo_sensor_id' => $sensorEquip['tipo_sensor_id']],
+                ['porta_conexao' => $sensorEquip['porta_conexao'], 'created_at' => $now, 'updated_at' => $now]
+            );
+        }
 
         // 6. Criar Leituras Fakes (20 pacotes de leituras, 1 pacote = 4 sensores = 80 linhas)
         for ($i = 0; $i < 20; $i++) {
@@ -156,5 +293,30 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->command->info('Banco populado com sucesso: Usuário, Propriedades, Sensores, Equipamentos e 20 pacotes de leituras EAV!');
+    }
+
+    private function upsertTipoSensor(string $grandeza, string $unidadeMedida, Carbon $now)
+    {
+        DB::table('tipo_sensors')->updateOrInsert(
+            ['grandeza' => $grandeza, 'unidade_medida' => $unidadeMedida],
+            ['created_at' => $now, 'updated_at' => $now]
+        );
+
+        return DB::table('tipo_sensors')
+            ->where('grandeza', $grandeza)
+            ->where('unidade_medida', $unidadeMedida)
+            ->first();
+    }
+
+    private function upsertCultura(string $nomeCultura, Carbon $now)
+    {
+        DB::table('culturas')->updateOrInsert(
+            ['nome_cultura' => $nomeCultura],
+            ['descricao' => null, 'created_at' => $now, 'updated_at' => $now]
+        );
+
+        return DB::table('culturas')
+            ->where('nome_cultura', $nomeCultura)
+            ->first();
     }
 }

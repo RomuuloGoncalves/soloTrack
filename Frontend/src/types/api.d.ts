@@ -250,6 +250,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/insumos/resumo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["insumo.resumo"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/insumos": {
         parameters: {
             query?: never;
@@ -1192,6 +1208,35 @@ export interface operations {
             };
         };
     };
+    "insumo.resumo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Resumo financeiro gerado";
+                        data: {
+                            patrimonio_total: number;
+                            tipos_de_insumos: number;
+                            economia_estimada: number;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
     "insumos.index": {
         parameters: {
             query?: never;
@@ -1210,7 +1255,30 @@ export interface operations {
                         success: boolean;
                         /** @constant */
                         message: "Insumos encontrados";
-                        data: components["schemas"]["Insumo"][];
+                        data: {
+                            current_page: number;
+                            data: components["schemas"]["Insumo"][];
+                            first_page_url: string | null;
+                            from: number | null;
+                            last_page_url: string | null;
+                            last_page: number;
+                            /** @description Generated paginator links. */
+                            links: {
+                                url: string | null;
+                                label: string;
+                                active: boolean;
+                            }[];
+                            next_page_url: string | null;
+                            /** @description Base path for paginator generated URLs. */
+                            path: string | null;
+                            /** @description Number of items shown per page. */
+                            per_page: number;
+                            prev_page_url: string | null;
+                            /** @description Number of the last item in the slice. */
+                            to: number | null;
+                            /** @description Total number of items being paginated. */
+                            total: number;
+                        };
                     };
                 };
             };
@@ -1296,15 +1364,45 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    nome_fertilizante?: string;
+                    quantidade?: number;
+                    unidade_medida?: string;
+                    preco_pago?: number;
+                };
+            };
+        };
         responses: {
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Insumo atualizado";
+                        data: string;
+                    };
+                };
             };
             401: components["responses"]["AuthenticationException"];
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success: boolean;
+                        /** @constant */
+                        message: "Insumo não encontrado";
+                        errors: string;
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
         };
     };
     "insumos.destroy": {

@@ -38,6 +38,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('propriedades', PropriedadeController::class);
     Route::apiResource('areas-plantio', AreaPlantioController::class);
     Route::apiResource('culturas', CulturaController::class);
+    Route::get('insumos/resumo', [InsumoController::class, 'resumo']);
     Route::apiResource('insumos', InsumoController::class);
 
     // --- Monitoramento e Sensores ---
