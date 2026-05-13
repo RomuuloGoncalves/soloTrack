@@ -11,6 +11,7 @@ import GestaoPropriedade from "./Pages/GestaoPropriedade/GestaoPropriedade";
 import DetalheArea from "./Pages/DetalheArea/DetalheArea";
 import VisaoGeral from "./Pages/VisaoGeral/VisaoGeral";
 import Dispositivos from "./Pages/Dispositivos/Dispositivos";
+import { Financas } from "./Pages/Financas/Financas";
 
 import { useTheme } from "./hooks/useTheme";
 import { ToastProvider } from "./contexts/ToastContext";
@@ -52,6 +53,9 @@ function App() {
             } />
             <Route path="/visaogeral" element={
               <RotaPrivada><VisaoGeral /></RotaPrivada>
+            } />
+            <Route path="/financas" element={
+              <RotaPrivada><Financas /></RotaPrivada>
             } />
 
             <Route path="*" element={<NotFoundPage />} />

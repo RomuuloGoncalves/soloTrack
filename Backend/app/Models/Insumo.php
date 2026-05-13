@@ -8,12 +8,21 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Insumo extends Model
 {
-    protected $fillable = [
+        protected $fillable = [
         'usuario_id',
         'nome_fertilizante',
         'preco_pago',
         'unidade_medida',
+        'quantidade',
     ];
+
+    // Adicione isso:
+    protected $appends = ['valor_total'];
+
+    public function getValorTotalAttribute(): float
+    {
+        return (float) $this->quantidade * (float) $this->preco_pago;
+    }
 
     // ===================== RELACIONAMENTOS =====================
 

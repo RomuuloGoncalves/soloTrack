@@ -48,11 +48,11 @@ export function Sidebar({ isOpen, onClose, onOpen, logo }: SidebarProps) {
           <span className={styles.logoText}>Solo<span className={styles.track}>Track.</span></span>
         </div>
 
-        <nav className={styles.navSection}>
+        <nav className={styles.navSection}>     
           <p className={styles.sectionTitle}>Organização</p>
           <Link to="/VisaoGeral" className={styles.navItem}><LayoutGrid size={18} /> Visão Geral</Link>
           <Link to="/GestaoPropriedade" className={styles.navItem}><Layers size={18} /> Gestão</Link>
-          <Link to="" className={styles.navItem}><Banknote size={18} /> Finanças</Link>
+          <Link to="/Financas" className={styles.navItem}><Banknote size={18} /> Finanças</Link>
           <Link to="/Relatorio" className={styles.navItem}><ClipboardList size={18} /> Relatório</Link>
           
           <p className={styles.sectionTitle} style={{marginTop: '20px'}}>Funções</p>

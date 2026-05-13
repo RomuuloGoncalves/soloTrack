@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Insumo;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreInsumoRequest;
 
 class InsumoController extends Controller
 {
@@ -26,7 +27,8 @@ class InsumoController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+
+    public function store(StoreInsumoRequest $request)
     {
         $insumo = Insumo::create($request->validated());
 

@@ -169,7 +169,6 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Endpoint principal para conversa com a IA e análise de dados (MCP) */
         post: operations["chat.chat"];
         delete?: never;
         options?: never;
@@ -320,6 +319,26 @@ export interface paths {
         post?: never;
         /** Remove the specified resource from storage */
         delete: operations["leituras.destroy"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/iot/leituras": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Recebe e processa os dados advindos do Hardware (ESP32/Arduino)
+         *     Rota desprotegida por sanctum (usa o MAC Address como identificador)
+         */
+        post: operations["leitura.receberDadosIot"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -485,11 +504,13 @@ export interface components {
             nome_fertilizante: string;
             preco_pago: string | null;
             unidade_medida: string;
+            quantidade: string;
             /** Format: date-time */
             created_at: string | null;
             /** Format: date-time */
             updated_at: string | null;
             deleted_at: string | null;
+            valor_total: string;
         };
         /** Propriedade */
         Propriedade: {
@@ -514,14 +535,13 @@ export interface components {
             latitude?: number | null;
             longitude?: number | null;
         };
-        /** StorePropriedadeRequest */
-        StorePropriedadeRequest: {
-            nome: string;
-            cidade?: string | null;
-            estado?: string | null;
-            latitude?: number | null;
-            longitude?: number | null;
-            tamanho_hectares?: number | null;
+        /** StoreInsumoRequest */
+        StoreInsumoRequest: {
+            nome_fertilizante: string;
+            quantidade: number;
+            /** @description Nossa quantidade aqui! */
+            unidade_medida: string;
+            preco_pago: number;
         };
         /** StoreUsuarioRequest */
         StoreUsuarioRequest: {
@@ -537,15 +557,6 @@ export interface components {
             tamanho_area_m2?: number | null;
             latitude?: number | null;
             longitude?: number | null;
-        };
-        /** UpdatePropriedadeRequest */
-        UpdatePropriedadeRequest: {
-            nome?: string;
-            cidade?: string | null;
-            estado?: string | null;
-            latitude?: number | null;
-            longitude?: number | null;
-            tamanho_hectares?: number | null;
         };
         /** Usuario */
         Usuario: {
@@ -669,7 +680,8 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                areas_plantio: string;
+                /** @description The areas plantio ID */
+                areas_plantio: number;
             };
             cookie?: never;
         };
@@ -689,6 +701,7 @@ export interface operations {
                 };
             };
             401: components["responses"]["AuthenticationException"];
+            404: components["responses"]["ModelNotFoundException"];
         };
     };
     "areas-plantio.update": {
@@ -696,7 +709,8 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                areas_plantio: string;
+                /** @description The areas plantio ID */
+                areas_plantio: number;
             };
             cookie?: never;
         };
@@ -720,6 +734,7 @@ export interface operations {
                 };
             };
             401: components["responses"]["AuthenticationException"];
+            404: components["responses"]["ModelNotFoundException"];
             422: components["responses"]["ValidationException"];
         };
     };
@@ -728,7 +743,8 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                areas_plantio: string;
+                /** @description The areas plantio ID */
+                areas_plantio: number;
             };
             cookie?: never;
         };
@@ -748,6 +764,7 @@ export interface operations {
                 };
             };
             401: components["responses"]["AuthenticationException"];
+            404: components["responses"]["ModelNotFoundException"];
         };
     };
     "auth.login": {
@@ -835,7 +852,6 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Se não houve chamada de ferramenta, apenas retorna a resposta da IA */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -1190,7 +1206,11 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StoreInsumoRequest"];
+            };
+        };
         responses: {
             201: {
                 headers: {
@@ -1206,6 +1226,7 @@ export interface operations {
                 };
             };
             401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
         };
     };
     "insumos.show": {
@@ -1317,11 +1338,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
+            /** @description Retorna um array indexado (sem as chaves do agrupamento) */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": unknown[];
+                };
             };
             401: components["responses"]["AuthenticationException"];
         };
@@ -1410,6 +1434,58 @@ export interface operations {
             404: components["responses"]["ModelNotFoundException"];
         };
     };
+    "leitura.receberDadosIot": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    mac_address: string;
+                    qr_code_hash: string;
+                    leituras: {
+                        tipo_sensor_id: number;
+                        valor: number;
+                    }[];
+                };
+            };
+        };
+        responses: {
+            /** @description 4. Retorna sucesso para o Arduino */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        status: "success";
+                        /** @constant */
+                        message: "Leituras registradas com sucesso!";
+                        total_registros_inseridos: number;
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        status: "error";
+                        /** @constant */
+                        message: "Erro interno ao processar leituras do IoT.";
+                        error_detail: string;
+                    };
+                };
+            };
+        };
+    };
     "propriedades.index": {
         parameters: {
             query?: never;
@@ -1442,11 +1518,7 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["StorePropriedadeRequest"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
                 headers: {
@@ -1462,7 +1534,6 @@ export interface operations {
                 };
             };
             401: components["responses"]["AuthenticationException"];
-            422: components["responses"]["ValidationException"];
         };
     };
     "propriedades.show": {
@@ -1514,11 +1585,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["UpdatePropriedadeRequest"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
                 headers: {
@@ -1547,7 +1614,6 @@ export interface operations {
                     };
                 };
             };
-422: components["responses"]["ValidationException"];
         };
     };
     "propriedades.destroy": {
