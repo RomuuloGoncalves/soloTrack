@@ -504,7 +504,6 @@ export interface components {
             nome_fertilizante: string;
             preco_pago: string | null;
             unidade_medida: string;
-            quantidade: string;
             /** Format: date-time */
             created_at: string | null;
             /** Format: date-time */

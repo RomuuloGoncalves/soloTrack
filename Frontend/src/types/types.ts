@@ -5,9 +5,9 @@ import type { components, operations } from './api';
 export type Usuario              = components['schemas']['Usuario'];
 export type StoreUsuarioRequest  = components['schemas']['StoreUsuarioRequest'];
 
-export type Propriedade              = components['schemas']['Propriedade'];
-export type StorePropriedadeRequest  = components['schemas']['StorePropriedadeRequest'];
-export type UpdatePropriedadeRequest = components['schemas']['UpdatePropriedadeRequest'];
+export type Propriedade = components['schemas']['Propriedade'];
+// export type StorePropriedadeRequest  = components['schemas']['StorePropriedadeRequest'];
+// export type UpdatePropriedadeRequest = components['schemas']['UpdatePropriedadeRequest'];
 
 export type AreaPlantio              = components['schemas']['AreaPlantio'];
 export type StoreAreaPlantioRequest  = components['schemas']['StoreAreaPlantioRequest'];
