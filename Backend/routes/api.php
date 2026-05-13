@@ -13,6 +13,7 @@ use App\Http\Controllers\EquipamentoController;
 use App\Http\Controllers\TipoSensorController;
 use App\Http\Controllers\LeituraController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\FinanceiroMcpController;
 
 
 Route::get('/hello', function () {
@@ -48,6 +49,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // --- Inteligência Artificial ---
     Route::post('/mcp/chat', [ChatController::class, 'chat']);
+    Route::get('/mcp/financas/resumo', [FinanceiroMcpController::class, 'resumo']);
+    Route::post('/mcp/financas/analisar', [FinanceiroMcpController::class, 'analisar']);
 });
 
 // --- Integração com IoT (Arduino / ESP32) ---

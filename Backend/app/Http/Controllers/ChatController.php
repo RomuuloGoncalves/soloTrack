@@ -9,6 +9,7 @@ use App\Mcp\Tools\CriarPropriedadeTool;
 use App\Mcp\Tools\CriarAreaPlantioTool;
 use App\Mcp\Tools\ListarAreasPlantioTool;
 use App\Mcp\Tools\ExcluirAreaPlantioTool;
+use App\Mcp\Tools\ResumoFinanceiroTool;
 use Illuminate\Http\Request;
 
 class ChatController extends Controller
@@ -22,6 +23,7 @@ class ChatController extends Controller
         'criar_area_plantio' => CriarAreaPlantioTool::class,
         'listar_areas_plantio'=> ListarAreasPlantioTool::class,
         'excluir_area_plantio'=> ExcluirAreaPlantioTool::class,
+        'resumo_financeiro'  => ResumoFinanceiroTool::class,
     ];
 
     public function __construct(GeminiService $gemini)

@@ -16,6 +16,20 @@ function primeiroErro(erros: Erros, campo: string): string | undefined {
   return erros[campo] || undefined;
 }
 
+function extrairTextoAnalise(resposta: any): string {
+  const candidates = resposta?.candidates;
+  if (!Array.isArray(candidates) || candidates.length === 0) return '';
+
+  const parts = candidates[0]?.content?.parts;
+  if (!Array.isArray(parts)) return '';
+
+  return parts
+    .map((part: { text?: string }) => part.text ?? '')
+    .filter(Boolean)
+    .join('\n')
+    .trim();
+}
+
 export function Financas() {
   const { theme } = useTheme();
   const { showToast } = useToast();
@@ -31,9 +45,16 @@ export function Financas() {
   const perPage = 10;
 
   // --- Resumo financeiro ---
-  const [patrimonio, setPatrimonio] = useState(0);
+  const [valorRealInvestido, setValorRealInvestido] = useState(0);
+  const [valorTeoricoIdeal, setValorTeoricoIdeal] = useState(0);
+  const [diferencaAbsoluta, setDiferencaAbsoluta] = useState(0);
+  const [diferencaPercentual, setDiferencaPercentual] = useState(0);
   const [tiposCount, setTiposCount] = useState(0);
-  const [economiaPercent, setEconomiaPercent] = useState(0);
+  const [areasComparadas, setAreasComparadas] = useState(0);
+  const [resumoFinanceiro, setResumoFinanceiro] = useState('');
+  const [promptAnalise, setPromptAnalise] = useState('');
+  const [analiseIA, setAnaliseIA] = useState('');
+  const [carregandoAnalise, setCarregandoAnalise] = useState(false);
 
   // --- Modal state ---
   const [modalAberto, setModalAberto] = useState(false);
@@ -49,8 +70,11 @@ export function Financas() {
 
   useEffect(() => {
     carregarInsumos(currentPage);
-    carregarResumo();
   }, [currentPage]);
+
+  useEffect(() => {
+    carregarResumoFinanceiro();
+  }, []);
 
   async function carregarInsumos(page: number) {
     setLoadingInsumos(true);
@@ -67,14 +91,41 @@ export function Financas() {
     }
   }
 
-  async function carregarResumo() {
+  async function carregarResumoFinanceiro() {
     try {
-      const res = await insumoService.resumo();
-      setPatrimonio(res.data.data.patrimonio_total ?? 0);
+      const res = await insumoService.resumoFinanceiro();
+      setValorRealInvestido(res.data.data.valor_real_investido ?? 0);
+      setValorTeoricoIdeal(res.data.data.valor_teorico_ideal ?? 0);
+      setDiferencaAbsoluta(res.data.data.diferenca_absoluta ?? 0);
+      setDiferencaPercentual(res.data.data.diferenca_percentual ?? 0);
       setTiposCount(res.data.data.tipos_de_insumos ?? 0);
-      setEconomiaPercent(res.data.data.economia_estimada ?? 0);
+      setAreasComparadas(res.data.data.areas_com_parametro ?? 0);
+      setResumoFinanceiro(res.data.data.resumo ?? '');
     } catch {
       // silencioso — cards mostram zero se falhar
+    }
+  }
+
+  async function solicitarAnaliseIA() {
+    setCarregandoAnalise(true);
+    setAnaliseIA('');
+
+    try {
+      const pergunta = promptAnalise.trim() || 'Explique a comparacao financeira, destaque o valor real investido, o valor teorico ideal e recomende a proxima acao.';
+      const res = await insumoService.analiseFinanceira(pergunta);
+
+      if (res.data.error) {
+        throw new Error(res.data.error);
+      }
+
+      const texto = extrairTextoAnalise(res.data);
+      setAnaliseIA(texto || 'A IA nao retornou um texto de analise.');
+    } catch (error: any) {
+      const message = error.response?.data?.error || error.message || 'Erro ao analisar as finanças.';
+      showToast(message, 'error');
+      setAnaliseIA(`Erro ao analisar as finanças: ${message}`);
+    } finally {
+      setCarregandoAnalise(false);
     }
   }
 
@@ -134,7 +185,7 @@ export function Financas() {
 
       setModalAberto(false);
       carregarInsumos(currentPage);
-      carregarResumo();
+      carregarResumoFinanceiro();
     } catch (error: any) {
       if (error.response?.status === 422) {
         setErros(extrairErros(error));
@@ -154,7 +205,7 @@ export function Financas() {
       setInsumos(prev => prev.filter(i => i.id !== id));
       showToast('Insumo excluído com sucesso!', 'success');
       carregarInsumos(currentPage);
-      carregarResumo();
+      carregarResumoFinanceiro();
     } catch {
       showToast('Erro ao excluir insumo.', 'error');
     }
@@ -162,6 +213,18 @@ export function Financas() {
 
   const fmt = (v: number) =>
     v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+  const diferencaVisivel = diferencaAbsoluta >= 0 ? diferencaAbsoluta : Math.abs(diferencaAbsoluta);
+  const tituloComparacao =
+    diferencaAbsoluta > 0 ? 'Acima do ideal' : diferencaAbsoluta < 0 ? 'Economia estimada' : 'Em equilíbrio';
+  const subtituloComparacao =
+    diferencaAbsoluta > 0
+      ? 'valor gasto acima do padrão'
+      : diferencaAbsoluta < 0
+        ? 'valor abaixo do padrão'
+        : 'sem desvio em relação ao padrão';
+  const iconeComparacao = diferencaAbsoluta > 0 ? '↑' : diferencaAbsoluta < 0 ? '↓' : '≋';
+  const corComparacao = diferencaAbsoluta > 0 ? 'amber' : 'green';
 
   const valorTotalEstimado =
     quantidade && precoUnitario && !isNaN(+quantidade) && !isNaN(+precoUnitario)
@@ -196,26 +259,74 @@ export function Financas() {
           <div className={styles.metricCard}>
             <div className={styles.metricIcon} data-color="green">$</div>
             <div>
-              <span className={styles.metricLabel}>Patrimônio em insumos</span>
-              <strong className={styles.metricValue}>{fmt(patrimonio)}</strong>
+              <span className={styles.metricLabel}>Valor real investido</span>
+              <strong className={styles.metricValue}>{fmt(valorRealInvestido)}</strong>
+              <span className={styles.metricSub}>{tiposCount} tipos cadastrados</span>
             </div>
           </div>
           <div className={styles.metricCard}>
             <div className={styles.metricIcon} data-color="blue">◈</div>
             <div>
-              <span className={styles.metricLabel}>Tipos de insumos</span>
-              <strong className={styles.metricValue}>{tiposCount}</strong>
+              <span className={styles.metricLabel}>Valor teórico ideal</span>
+              <strong className={styles.metricValue}>{fmt(valorTeoricoIdeal)}</strong>
+              <span className={styles.metricSub}>{areasComparadas} áreas com padrão</span>
             </div>
           </div>
           <div className={styles.metricCard}>
-            <div className={styles.metricIcon} data-color="amber">↑</div>
+            <div className={styles.metricIcon} data-color={corComparacao}>{iconeComparacao}</div>
             <div>
-              <span className={styles.metricLabel}>Economia Estimada</span>
-              <strong className={styles.metricValue}>{economiaPercent}%</strong>
-              <span className={styles.metricSub}>no mês atual</span>
+              <span className={styles.metricLabel}>{tituloComparacao}</span>
+              <strong className={styles.metricValue}>{fmt(diferencaVisivel)}</strong>
+              <span className={styles.metricSub}>{Math.abs(diferencaPercentual).toFixed(1)}% {subtituloComparacao}</span>
             </div>
           </div>
         </div>
+
+        <section className={styles.aiCard}>
+          <div className={styles.aiHeader}>
+            <div>
+              <h2>Comparação assistida por IA</h2>
+              <p>
+                A base teórica vem dos vínculos entre áreas e insumos. A IA interpreta esse quadro e devolve uma leitura
+                prática para decisão.
+              </p>
+            </div>
+            <button className={styles.aiBtn} onClick={solicitarAnaliseIA} disabled={carregandoAnalise}>
+              {carregandoAnalise ? 'Analisando...' : 'Gerar análise'}
+            </button>
+          </div>
+
+          {resumoFinanceiro && <div className={styles.aiHint}>{resumoFinanceiro}</div>}
+
+          <div className={styles.aiSummaryGrid}>
+            <div className={styles.aiSummaryItem}>
+              <span>Real investido</span>
+              <strong>{fmt(valorRealInvestido)}</strong>
+            </div>
+            <div className={styles.aiSummaryItem}>
+              <span>Ideal teórico</span>
+              <strong>{fmt(valorTeoricoIdeal)}</strong>
+            </div>
+            <div className={styles.aiSummaryItem}>
+              <span>Diferença</span>
+              <strong>{fmt(diferencaVisivel)}</strong>
+            </div>
+          </div>
+
+          <div className={styles.aiPromptGroup}>
+            <label>Pedido para a IA</label>
+            <textarea
+              className={styles.aiTextarea}
+              value={promptAnalise}
+              onChange={e => setPromptAnalise(e.target.value)}
+              placeholder="Ex: diga onde estou acima do ideal e qual insumo revisar primeiro."
+            />
+          </div>
+
+          <div className={styles.aiResponse} aria-live="polite">
+            {analiseIA || 'A análise da IA aparece aqui depois que você gerar o resumo.'}
+          </div>
+        </section>
 
         {/* Tabela */}
         <section className={styles.tableCard}>

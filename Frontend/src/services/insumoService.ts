@@ -46,6 +46,51 @@ type InsumoResumoResponse = {
   };
 };
 
+type ResumoFinanceiroResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    sucesso: boolean;
+    usuario_id: number;
+    patrimonio_total: number;
+    valor_real_investido: number;
+    valor_teorico_ideal: number;
+    diferenca_absoluta: number;
+    diferenca_percentual: number;
+    economia_estimada: number;
+    sobrecusto_estimado: number;
+    tipos_de_insumos: number;
+    areas_com_parametro: number;
+    status_comparacao: string;
+    resumo: string;
+    detalhes_areas: Array<{
+      id: number;
+      nome_area: string;
+      propriedade?: string | null;
+      tamanho_area_m2?: number | string | null;
+      valor_teorico: number;
+      insumos: Array<{
+        id: number;
+        nome_fertilizante: string;
+        quantidade_padrao: number;
+        preco_pago: number;
+        valor_teorico: number;
+      }>;
+    }>;
+  };
+};
+
+type RespostaAnaliseFinanceira = {
+  candidates?: Array<{
+    content?: {
+      parts?: Array<{
+        text?: string;
+      }>;
+    };
+  }>;
+  error?: string;
+};
+
 const insumoService = {
   listar: (page: number = 1, perPage: number = 10): AxiosPromise<InsumosIndexResponse> => {
     return api.get('/insumos', {
@@ -55,6 +100,14 @@ const insumoService = {
 
   resumo: (): AxiosPromise<InsumoResumoResponse> => {
     return api.get('/insumos/resumo');
+  },
+
+  resumoFinanceiro: (): AxiosPromise<ResumoFinanceiroResponse> => {
+    return api.get('/mcp/financas/resumo');
+  },
+
+  analiseFinanceira: (mensagem: string): AxiosPromise<RespostaAnaliseFinanceira> => {
+    return api.post('/mcp/financas/analisar', { mensagem });
   },
 
   criar: (payload: StoreInsumoRequest): AxiosPromise<InsumoStoreResponse> => {
