@@ -7,17 +7,17 @@
 // ==========================================
 // CONFIGURAÇÕES DE REDE
 // ==========================================
-const char* ssid = "NOME_DA_SUA_REDE";
-const char* password = "SENHA_DA_SUA_REDE";
+const char* ssid = "#";
+const char* password = "#";
 
 // ==========================================
 // CONFIGURAÇÕES DA API (SoloTrack)
 // ==========================================
-// Altere para o IP da sua máquina rodando o Laravel
-const char* api_url = "http://192.168.0.100:8000/api/iot/leituras"; 
+const char* api_url = "http://[IP_ADDRESS]/api/iot/leituras"; 
 
-// Hash da área de plantio cadastrada no banco de dados
-const char* qr_code_hash_atual = "AREA_FAKE_123"; 
+
+// Hash da área de plantio cadastrada no banco de dados (Area ID 1)
+const char* qr_code_hash_atual = "89ff493e-e1ab-40b0-81ac-dd89cdc00bba"; 
 
 String mac_address;
 
@@ -35,10 +35,11 @@ void setup() {
   
   Serial.println("\nConectado com Sucesso!");
   
-  // 2. Coleta o MAC Address que vai identificar este dispositivo no Laravel
-//  mac_address = WiFi.macAddress();
+  // 2. Coleta o MAC Address
+  // No futuro, substituir por: mac_address = WiFi.macAddress();
+  mac_address = "A1:B2:C3:D4:E5:F6";
+  
   Serial.println("==============================================");
-  Serial.println("COPIE ESTE MAC E CADASTRE COMO UM EQUIPAMENTO:");
   Serial.println(mac_address);
   Serial.println("==============================================");
 }
