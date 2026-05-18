@@ -134,9 +134,9 @@ export function ChatBot() {
         <div className={styles.footerSection}>
           {!isChatStarted && (
             <div className={styles.cardsContainer}>
-              <button className={styles.card} onClick={() => {setMessage("Quem são os usuários do sistema?");}}>Quem são os usuários do sistema?</button>
-              <button className={styles.card} onClick={() => {setMessage("Quantas áreas de plantio existem?");}}>Quantas áreas de plantio existem?</button>
               <button className={styles.card} onClick={() => {setMessage("Quais os insumos disponíveis?");}}>Quais os insumos disponíveis?</button>
+              <button className={styles.card} onClick={() => {setMessage("Quais os dispositivos IoT cadastrados?");}}>Quais os dispositivos IoT cadastrados?</button>
+              <button className={styles.card} onClick={() => {setMessage("Quantas áreas de plantio existem?");}}>Quantas áreas de plantio existem?</button>
             </div>
           )}
 

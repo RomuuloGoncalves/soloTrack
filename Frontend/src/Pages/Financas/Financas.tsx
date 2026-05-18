@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Sidebar } from '../../components/Sidebar/Sidebar.tsx';
-import { Pencil, Trash2, X } from 'lucide-react';
+import { Pencil, Trash2 } from 'lucide-react';
 import styles from './Financas.module.css';
 import { useTheme } from '../../hooks/useTheme';
 import { useToast } from '../../contexts/ToastContext';
@@ -8,13 +8,7 @@ import lightLogo from '../../assets/images/Light-logo.svg';
 import darkLogo from '../../assets/images/Dark-Logo.svg';
 import insumoService from '../../services/insumoService.ts';
 import type { InsumoFinanceiro } from '../../services/insumoService';
-import type { StoreInsumoRequest } from '../../types/types';
-
-type Erros = Record<string, string>;
-
-function primeiroErro(erros: Erros, campo: string): string | undefined {
-  return erros[campo] || undefined;
-}
+import { NovoInsumoSidebar } from '../../components/NovoInsumoSidebar/NovoInsumoSidebar';
 
 export function Financas() {
   const { theme } = useTheme();
@@ -35,17 +29,9 @@ export function Financas() {
   const [tiposCount, setTiposCount] = useState(0);
   const [economiaPercent, setEconomiaPercent] = useState(0);
 
-  // --- Modal state ---
+  // --- Sidebar state ---
   const [modalAberto, setModalAberto] = useState(false);
   const [editandoInsumo, setEditandoInsumo] = useState<InsumoFinanceiro | null>(null);
-  const [salvando, setSalvando] = useState(false);
-  const [erros, setErros] = useState<Erros>({});
-
-  // --- Form fields ---
-  const [nome, setNome] = useState('');
-  const [quantidade, setQuantidade] = useState('');
-  const [unidade, setUnidade] = useState('');
-  const [precoUnitario, setPrecoUnitario] = useState('');
 
   useEffect(() => {
     carregarInsumos(currentPage);
@@ -78,73 +64,14 @@ export function Financas() {
     }
   }
 
-  function extrairErros(error: any): Erros {
-    const apiErrors = error.response?.data?.errors;
-    if (!apiErrors) return {};
-    const mapeado: Erros = {};
-    for (const campo in apiErrors) {
-      mapeado[campo] = Array.isArray(apiErrors[campo])
-        ? apiErrors[campo][0]
-        : apiErrors[campo];
-    }
-    return mapeado;
-  }
-
   function abrirModalNovo() {
     setEditandoInsumo(null);
-    setNome('');
-    setQuantidade('');
-    setUnidade('');
-    setPrecoUnitario('');
-    setErros({});
     setModalAberto(true);
   }
 
   function abrirModalEdicao(insumo: InsumoFinanceiro) {
     setEditandoInsumo(insumo);
-    setNome(insumo.nome_fertilizante);
-    setQuantidade(String(insumo.quantidade ?? ''));
-    setUnidade(insumo.unidade_medida);
-    setPrecoUnitario(String(insumo.preco_pago));
-    setErros({});
     setModalAberto(true);
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setErros({});
-    setSalvando(true);
-    try {
-      const payload: StoreInsumoRequest = {
-        nome_fertilizante: nome,
-        quantidade: parseFloat(quantidade),
-        unidade_medida: unidade,
-        preco_pago: parseFloat(precoUnitario),
-      };
-
-      if (editandoInsumo) {
-        const res = await insumoService.atualizar(editandoInsumo.id, payload);
-        setInsumos(prev => prev.map(i => (i.id === editandoInsumo.id ? res.data.data : i)));
-        showToast('Insumo atualizado com sucesso!', 'success');
-      } else {
-        const res = await insumoService.criar(payload);
-        setInsumos(prev => [res.data.data, ...prev]);
-        showToast('Insumo criado com sucesso!', 'success');
-      }
-
-      setModalAberto(false);
-      carregarInsumos(currentPage);
-      carregarResumo();
-    } catch (error: any) {
-      if (error.response?.status === 422) {
-        setErros(extrairErros(error));
-        showToast('Corrija os erros no formulário.', 'error');
-      } else {
-        showToast(error.response?.data?.message || 'Erro ao salvar insumo.', 'error');
-      }
-    } finally {
-      setSalvando(false);
-    }
   }
 
   async function handleExcluir(id: number) {
@@ -162,11 +89,6 @@ export function Financas() {
 
   const fmt = (v: number) =>
     v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-  const valorTotalEstimado =
-    quantidade && precoUnitario && !isNaN(+quantidade) && !isNaN(+precoUnitario)
-      ? +quantidade * +precoUnitario
-      : null;
 
   const inicioItem = (currentPage - 1) * perPage + 1;
   const fimItem = Math.min(currentPage * perPage, total);
@@ -256,21 +178,21 @@ export function Financas() {
                         <td>{fmt(Number(insumo.valor_total ?? 0))}</td>
                         <td className={styles.tdActions}>
                           <button
-                            className={styles.actionBtn}
-                            data-variant="edit"
-                            onClick={() => abrirModalEdicao(insumo)}
-                            title="Editar"
-                          >
-                            <Pencil size={14} />
-                          </button>
-                          <button
-                            className={styles.actionBtn}
-                            data-variant="delete"
-                            onClick={() => handleExcluir(insumo.id)}
-                            title="Excluir"
-                          >
-                            <Trash2 size={14} />
-                          </button>
+                              className={styles.actionBtn}
+                              data-variant="edit"
+                              onClick={() => abrirModalEdicao(insumo)}
+                              title="Editar"
+                            >
+                              <Pencil size={14} />
+                            </button>
+                            <button
+                              className={styles.actionBtn}
+                              data-variant="delete"
+                              onClick={() => handleExcluir(insumo.id)}
+                              title="Excluir"
+                            >
+                              <Trash2 size={14} />
+                            </button>
                         </td>
                       </tr>
                     ))
@@ -316,117 +238,15 @@ export function Financas() {
         </section>
       </main>
 
-      {/* Modal slide-in direita */}
-      {modalAberto && (
-        <div className={styles.modalOverlay} onClick={() => setModalAberto(false)}>
-          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-            <div className={styles.modalHeader}>
-              <div>
-                <h2>{editandoInsumo ? 'Editar Insumo' : 'Novo Insumo'}</h2>
-                <p>{editandoInsumo ? 'Atualize os dados do insumo' : 'Adicione um novo insumo'}</p>
-              </div>
-              <button
-                className={styles.modalClose}
-                onClick={() => setModalAberto(false)}
-                aria-label="Fechar"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            <form className={styles.modalBody} onSubmit={handleSubmit}>
-              <div className={styles.inputGroup}>
-                <label>Nome do insumo</label>
-                <input
-                  type="text"
-                  placeholder="Digite um nome..."
-                  value={nome}
-                  onChange={e => { setNome(e.target.value); setErros(p => ({ ...p, nome: '' })); }}
-                  className={primeiroErro(erros, 'nome_fertilizante') ? styles.inputError : ''}
-                />
-                {primeiroErro(erros, 'nome_fertilizante') && (
-                  <span className={styles.fieldError}>{primeiroErro(erros, 'nome_fertilizante')}</span>
-                )}
-              </div>
-
-              <div className={styles.inputGroup}>
-                <label>Valor unitário</label>
-                <div className={`${styles.inputPrefix} ${primeiroErro(erros, 'preco_pago') ? styles.inputPrefixError : ''}`}>
-                  <span>R$</span>
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    placeholder="0,00"
-                    value={precoUnitario}
-                    onChange={e => { setPrecoUnitario(e.target.value); setErros(p => ({ ...p, preco_pago: '' })); }}
-                  />
-                </div>
-                {primeiroErro(erros, 'preco_pago') && (
-                  <span className={styles.fieldError}>{primeiroErro(erros, 'preco_pago')}</span>
-                )}
-              </div>
-
-              <div className={styles.inputGroup}>
-                <label>Unidade de Medida</label>
-                <input
-                  type="text"
-                  placeholder="Digite a unidade de medida..."
-                  value={unidade}
-                  onChange={e => { setUnidade(e.target.value); setErros(p => ({ ...p, unidade_medida: '' })); }}
-                  className={primeiroErro(erros, 'unidade_medida') ? styles.inputError : ''}
-                />
-                {primeiroErro(erros, 'unidade_medida') && (
-                  <span className={styles.fieldError}>{primeiroErro(erros, 'unidade_medida')}</span>
-                )}
-              </div>
-
-              <div className={styles.inputGroup}>
-                <label>Quantidade</label>
-                <input
-                  type="number"
-                  min="0"
-                  placeholder="0"
-                  value={quantidade}
-                  onChange={e => { setQuantidade(e.target.value); setErros(p => ({ ...p, quantidade: '' })); }}
-                  className={primeiroErro(erros, 'quantidade') ? styles.inputError : ''}
-                />
-                {primeiroErro(erros, 'quantidade') && (
-                  <span className={styles.fieldError}>{primeiroErro(erros, 'quantidade')}</span>
-                )}
-              </div>
-
-              {valorTotalEstimado !== null && (
-                <div className={styles.totalEstimado}>
-                  Valor total estimado:{' '}
-                  <strong>{fmt(valorTotalEstimado)}</strong>
-                </div>
-              )}
-
-              <div className={styles.modalFooter}>
-                <button
-                  type="submit"
-                  className={styles.saveBtn}
-                  disabled={salvando}
-                >
-                  {salvando
-                    ? 'Salvando...'
-                    : editandoInsumo
-                      ? 'Atualizar insumo'
-                      : 'Criar insumo'}
-                </button>
-                <button
-                  type="button"
-                  className={styles.cancelBtn}
-                  onClick={() => setModalAberto(false)}
-                >
-                  Cancelar
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <NovoInsumoSidebar
+        isOpen={modalAberto}
+        onClose={() => setModalAberto(false)}
+        onSuccess={() => {
+          carregarInsumos(currentPage);
+          carregarResumo();
+        }}
+        insumoParaEditar={editandoInsumo}
+      />
     </div>
   );
 }

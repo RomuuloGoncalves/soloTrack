@@ -20,9 +20,11 @@ export interface Dispositivo {
 
 interface Props {
   dispositivo: Dispositivo;
+  onEdit?: (dispositivo: Dispositivo) => void;
+  onDelete?: (id: number) => void;
 }
 
-function Accordion({ dispositivo }: Props) {
+function Accordion({ dispositivo, onEdit, onDelete }: Props) {
   const { nome, mac, status, sensores } = dispositivo;
 
   const detailsRef = useRef<HTMLDetailsElement>(null);
@@ -113,11 +115,19 @@ function Accordion({ dispositivo }: Props) {
       </details>
 
       <div className={styles.actions}>
-        <button className={`${styles.btn} ${styles.btnDelete}`}>
+        <button
+          className={`${styles.btn} ${styles.btnDelete}`}
+          onClick={() => onDelete?.(dispositivo.id)}
+          title="Excluir"
+        >
           <Trash2 />
         </button>
 
-        <button className={`${styles.btn} ${styles.btnEdit}`}>
+        <button
+          className={`${styles.btn} ${styles.btnEdit}`}
+          onClick={() => onEdit?.(dispositivo)}
+          title="Editar"
+        >
           <Pencil />
         </button>
       </div>

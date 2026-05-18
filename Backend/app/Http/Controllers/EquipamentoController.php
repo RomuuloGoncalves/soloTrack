@@ -10,9 +10,10 @@ class EquipamentoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return $this->success(Equipamento::all(), "Equipamentos encontrados");
+        $equipamentos = Equipamento::where('usuario_id', $request->user()->id)->get();
+        return $this->success($equipamentos, "Equipamentos encontrados");
     }
 
     /**
@@ -28,7 +29,14 @@ class EquipamentoController extends Controller
      */
     public function store(Request $request)
     {
-        $equipamento = Equipamento::create($request->validated());
+        $dados = $request->validate([
+            'mac_address' => 'required|string|max:17|unique:equipamentos,mac_address',
+            'nome_apelido' => 'nullable|string|max:255',
+        ]);
+
+        $dados['usuario_id'] = $request->user()->id;
+
+        $equipamento = Equipamento::create($dados);
 
         return $this->success($equipamento, 'Equipamento criado', 201);
     }
@@ -36,9 +44,9 @@ class EquipamentoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
-        $equipamento = Equipamento::find($id);
+        $equipamento = Equipamento::where('usuario_id', $request->user()->id)->find($id);
         if (!$equipamento) {
             return $this->error("Equipamento não encontrado", 404);
         }
@@ -58,15 +66,27 @@ class EquipamentoController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $equipamento = Equipamento::where('usuario_id', $request->user()->id)->find($id);
+        if (!$equipamento) {
+            return $this->error("Equipamento não encontrado", 404);
+        }
+
+        $dados = $request->validate([
+            'mac_address' => 'sometimes|required|string|max:17|unique:equipamentos,mac_address,' . $id,
+            'nome_apelido' => 'nullable|string|max:255',
+        ]);
+
+        $equipamento->update($dados);
+
+        return $this->success($equipamento->fresh(), 'Equipamento atualizado');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
-        $equipamento = Equipamento::find($id);
+        $equipamento = Equipamento::where('usuario_id', $request->user()->id)->find($id);
         if (!$equipamento) {
             return $this->error("Equipamento não encontrado", 404);
         }

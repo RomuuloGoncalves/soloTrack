@@ -57,7 +57,7 @@ export function Sidebar({ isOpen, onClose, onOpen, logo }: SidebarProps) {
           
           <p className={styles.sectionTitle} style={{marginTop: '20px'}}>Funções</p>
           <Link to="" className={styles.navItem}><TrendingUp size={18} /> Projeção</Link>
-          <Link to="" className={styles.navItem}><Package size={18} /> Dispositivos</Link>
+          <Link to="/dispositivos" className={styles.navItem}><Package size={18} /> Dispositivos</Link>
           <Link to="/ChatBot" className={styles.navItem}>
             <Sparkles size={18} /> Suporte
           </Link>

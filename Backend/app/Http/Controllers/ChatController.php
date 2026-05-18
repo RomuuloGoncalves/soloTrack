@@ -9,6 +9,12 @@ use App\Mcp\Tools\CriarPropriedadeTool;
 use App\Mcp\Tools\CriarAreaPlantioTool;
 use App\Mcp\Tools\ListarAreasPlantioTool;
 use App\Mcp\Tools\ExcluirAreaPlantioTool;
+use App\Mcp\Tools\CriarInsumoTool;
+use App\Mcp\Tools\ListarInsumosTool;
+use App\Mcp\Tools\ExcluirInsumoTool;
+use App\Mcp\Tools\CriarEquipamentoTool;
+use App\Mcp\Tools\ListarEquipamentosTool;
+use App\Mcp\Tools\ExcluirEquipamentoTool;
 use Illuminate\Http\Request;
 
 class ChatController extends Controller
@@ -16,12 +22,22 @@ class ChatController extends Controller
     protected GeminiService $gemini;
 
     protected array $toolMap = [
-        'listar_usuarios'    => ListarUsuariosTool::class,
-        'listar_propriedades' => ListarPropriedadesTool::class,
-        'criar_propriedade'  => CriarPropriedadeTool::class,
-        'criar_area_plantio' => CriarAreaPlantioTool::class,
-        'listar_areas_plantio'=> ListarAreasPlantioTool::class,
-        'excluir_area_plantio'=> ExcluirAreaPlantioTool::class,
+        'listar_usuarios'      => ListarUsuariosTool::class,
+        'listar_propriedades'   => ListarPropriedadesTool::class,
+        'criar_propriedade'     => CriarPropriedadeTool::class,
+        'criar_area_plantio'    => CriarAreaPlantioTool::class,
+        'listar_areas_plantio'  => ListarAreasPlantioTool::class,
+        'excluir_area_plantio'  => ExcluirAreaPlantioTool::class,
+        
+        // --- Insumos ---
+        'criar_insumo'          => CriarInsumoTool::class,
+        'listar_insumos'        => ListarInsumosTool::class,
+        'excluir_insumo'        => ExcluirInsumoTool::class,
+        
+        // --- Equipamentos ---
+        'criar_equipamento'     => CriarEquipamentoTool::class,
+        'listar_equipamentos'   => ListarEquipamentosTool::class,
+        'excluir_equipamento'   => ExcluirEquipamentoTool::class,
     ];
 
     public function __construct(GeminiService $gemini)
