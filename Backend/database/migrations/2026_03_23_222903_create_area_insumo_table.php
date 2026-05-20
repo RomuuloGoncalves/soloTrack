@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('area_plantio_id')->constrained()->onDelete('cascade');
             $table->foreignId('insumo_id')->constrained()->onDelete('cascade');
             $table->decimal('quantidade_padrao', 10, 2);
+            $table->decimal('quantidade_aplicada', 10, 2)->default(0);
             $table->timestamps();
         });
     }

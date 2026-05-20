@@ -13,6 +13,7 @@ use App\Http\Controllers\EquipamentoController;
 use App\Http\Controllers\TipoSensorController;
 use App\Http\Controllers\LeituraController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\VisaoGeralController;
 
 
 Route::get('/hello', function () {
@@ -48,6 +49,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // --- Inteligência Artificial ---
     Route::post('/mcp/chat', [ChatController::class, 'chat']);
+
+    // ---- Visao geral -----
+    Route::get('/visao-geral/filtros', [VisaoGeralController::class, 'obterFiltros']);
+    Route::get('/visao-geral', [VisaoGeralController::class, 'obterDadosDashboard']);
 });
 
 // --- Integração com IoT (Arduino / ESP32) ---
