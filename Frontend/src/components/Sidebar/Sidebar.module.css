@@ -64,6 +64,15 @@
 }
 
 .navItem:hover { background: rgba(88, 196, 17, 0.1); color: #58C411; }
+
+.betaLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-secondary);
+  opacity: 0.8;
+  margin-left: 6px;
+}
+
 .sidebarFooter { padding: 20px; border-top: 1px solid var(--border-color); }
 
 .overlay {
