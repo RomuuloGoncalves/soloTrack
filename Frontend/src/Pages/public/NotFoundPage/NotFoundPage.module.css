@@ -1,0 +1,78 @@
+.pageWrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, rgba(36, 76, 78, 0.08) 0%, rgba(228, 241, 233, 0.35) 100%);
+  color: var(--color-text);
+  padding: 2rem;
+}
+
+.card {
+  width: min(560px, 100%);
+  background: var(--card-bg);
+  border: 1px solid rgba(36, 76, 78, 0.12);
+  border-radius: 28px;
+  box-shadow: 0 24px 80px rgba(36, 76, 78, 0.12);
+  padding: 3rem 2.5rem;
+  text-align: center;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 1.5rem;
+  border-radius: 50%;
+  background: rgba(88, 196, 17, 0.12);
+  color: var(--color-secondary);
+  font-size: 2.75rem;
+  font-weight: 700;
+  border: 1px solid rgba(88, 196, 17, 0.18);
+}
+
+h1 {
+  margin-bottom: 1rem;
+  color: var(--color-primary);
+  font-size: clamp(2.2rem, 4vw, 2.75rem);
+}
+
+p {
+  margin: 0 auto 2rem;
+  max-width: 440px;
+  color: var(--text-secondary);
+  line-height: 1.75;
+  font-size: 1rem;
+}
+
+.homeButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.95rem 1.75rem;
+  border-radius: 999px;
+  background: var(--color-secondary);
+  color: var(--color-white);
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.homeButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(88, 196, 17, 0.18);
+}
+
+@media (max-width: 640px) {
+  .card {
+    padding: 2rem 1.5rem;
+  }
+
+  .status {
+    width: 84px;
+    height: 84px;
+    font-size: 2.3rem;
+  }
+}
