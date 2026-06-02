@@ -99,7 +99,7 @@ export function ChatBot() {
             <div className={styles.mainContent}>
               <img src={logo} alt="SoloTrack Logo" className={styles.centralLogo} />
               <div className={styles.greeting}>
-                <h1>Bom dia, Marcos</h1>
+                <h1>Bom dia, {usuario?.nome ?? 'Usuário'}</h1>
                 <h2>Como eu posso te ajudar hoje?</h2>
                 <p>Escolha um prompt abaixo ou escreva o seu próprio para iniciar uma conversa</p>
               </div>
