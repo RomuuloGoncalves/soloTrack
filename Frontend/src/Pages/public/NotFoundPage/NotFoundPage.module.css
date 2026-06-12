@@ -33,13 +33,13 @@
   border: 1px solid rgba(88, 196, 17, 0.18);
 }
 
-h1 {
+.card h1 {
   margin-bottom: 1rem;
   color: var(--color-primary);
   font-size: clamp(2.2rem, 4vw, 2.75rem);
 }
 
-p {
+.card p {
   margin: 0 auto 2rem;
   max-width: 440px;
   color: var(--text-secondary);

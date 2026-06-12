@@ -16,19 +16,17 @@ function PublicHome() {
         <div className={style.gridBar}></div>
 
         <div className={style.container}>
-          {/* Esquerda: Tela Inicial */}
-          <div className={style.formSection}>
-            <div className={style.formContainer}>
-              <div className={style.logoContainer}>
-                <h1 className={style.titleLogo}>Transforme <span className={style.titleGreen}>dados </span>do <span className={style.titleGreen}>solo </span>
-                em <span className={style.titleGreen}>resultados reais </span>no campo.
-                </h1>
-              </div>
-
-              <p className={style.MainText}>
-                <span className={style.titleGreen}>Monitore </span>a fertilidade, <span className={style.titleGreen}>identifique </span>deficiências nutricionais e <span className={style.titleGreen}>receba insights </span>que ajudam a aumentar a produtividade e <span className={style.titleGreen}>reduzir custos operacionais.</span>
-              </p>
+          {/* Esquerda: Textos de Apresentação */}
+          <div className={style.secaoTexto}>
+            <div className={style.containerTexto}>
+              <h1 className={style.tituloApresentacao}>
+                Transforme <span className={style.textoVerde}>dados do solo</span> em <span className={style.textoVerde}>resultados reais</span> no campo.
+              </h1>
               
+              <p className={style.textoApresentacao}>
+                <span className={style.textoVerde}>Monitore</span> a fertilidade, <span className={style.textoVerde}>identifique</span> deficiências nutricionais e <span className={style.textoVerde}>receba insights</span> que ajudam a aumentar a produtividade e <span className={style.textoVerde}>reduzir custos operacionais.</span>
+              </p>
+
               <Link to="/login" className={style.submitButton}>
                 Entrar
               </Link>
@@ -36,13 +34,12 @@ function PublicHome() {
               <p className={style.footerText}>
                 Não tem conta? <Link to="/signup" className={style.link}>Crie uma <strong>agora</strong></Link>
               </p>
-
             </div>
           </div>
 
           {/* Direita: Imagem */}
           <div className={style.imageSection}>
-            <div className={style.heroImage} title="SoloTrack Logo"></div>
+            <div className={style.heroImage} title="SoloTrack"></div>
           </div>
         </div>
 
